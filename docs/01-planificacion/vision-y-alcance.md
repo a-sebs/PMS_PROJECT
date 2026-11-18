@@ -2,16 +2,16 @@
 
 | Campo | Valor |
 | --- | --- |
-| Proyecto | Aurora PMS — Property Management System para hotel boutique |
+| Proyecto | Aurora PMS — Property Management System para PYME |
 | Asignatura | Aplicaciones Web Avanzadas |
 | Duración | 12 semanas |
-| Stack obligatorio | Node.js + Express + plantillas (EJS) + HTML5/CSS3/JavaScript + Socket.IO |
-| Versión del documento | 1.0 (Sprint 0) |
+| Stack | Node.js + Express + plantillas (EJS) + HTML5/CSS3/JavaScript + Socket.IO |
+| Versión del documento | 2.0 (Sprint 0) |
 
 ## 1. Problema
 
-Un hotel pequeño coordina a recepción, limpieza y mantenimiento con llamadas, hojas de cálculo y
-grupos de mensajería. El resultado es conocido en la industria:
+La PYME coordina a recepción, limpieza y mantenimiento con llamadas, hojas de cálculo y
+grupos de WhatsApp. El resultado es conocido:
 
 - **Dobles reservas**: dos personas venden la misma habitación para las mismas fechas.
 - **Habitaciones "fantasma"**: recepción no sabe si una habitación ya fue limpiada, así que el
@@ -22,7 +22,7 @@ grupos de mensajería. El resultado es conocido en la industria:
 
 ## 2. Visión
 
-> **Para** hoteles boutique de 10 a 60 habitaciones **que** coordinan recepción, limpieza y
+> **Para** hoteles o PYMES **que** se dedican al arriendo a corto plazo y coordinan recepción, limpieza y
 > mantenimiento de forma manual, **Aurora PMS** es una aplicación web **que** mantiene a todo el
 > equipo viendo el mismo estado del hotel en tiempo real y **garantiza desde la base de datos** que
 > una habitación nunca se venda dos veces. **A diferencia de** las hojas de cálculo o de un CRUD
@@ -35,8 +35,6 @@ grupos de mensajería. El resultado es conocido en la industria:
 | O1 | Cubrir el ciclo completo de una estancia: reserva → check-in → limpieza → check-out → cobro | Guion de demo ejecutado sin intervención técnica | Semana 12 |
 | O2 | Cero reservas solapadas para la misma habitación | Prueba automatizada con 50 solicitudes concurrentes: exactamente 1 éxito | Semana 5 |
 | O3 | Cambios operativos visibles en otros clientes sin recargar | p95 < 1 s en red local (prueba con 2+ navegadores) | Semana 3 |
-| O4 | Calidad sostenida | CI en verde en cada PR, 0 errores de ESLint, cobertura ≥ 70 % en servicios | Continuo |
-| O5 | Dominio del código por parte del equipo | Cada integrante explica y defiende su módulo en la demo final | Semana 12 |
 
 ## 4. Alcance
 
@@ -99,8 +97,7 @@ viendo esta reserva"), tarifas por temporada, exportación CSV, modo offline par
 - Toda reserva se hace sobre una habitación concreta (ver [ADR-0007](../03-diseno/adr/0007-overbooking-en-la-base-de-datos.md)).
 
 **Restricciones**
-
-- 12 semanas calendario, con semanas de exámenes que reducen la capacidad.
+ 
 - Stack definido por la asignatura: Node.js, Express, plantillas del lado del servidor, JavaScript
   sin frameworks de frontend, comunicación en tiempo real con Socket.IO o `ws`.
 - Presupuesto cero: herramientas gratuitas y planes gratuitos o de estudiante para el despliegue.

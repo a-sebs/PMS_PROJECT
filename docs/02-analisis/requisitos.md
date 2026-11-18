@@ -1,7 +1,7 @@
 # Especificación de requisitos
 
 Este documento es la referencia para el backlog: cada historia de usuario (`HU-xx`) se convierte en
-un issue de GitHub, y cada criterio de aceptación en al menos una prueba.
+un issue y cada criterio de aceptación en al menos una prueba.
 
 - **Prioridad**: MoSCoW (*Must* = MVP).
 - **Sprint**: planificación tentativa; ver el [plan del proyecto](../01-planificacion/plan-del-proyecto.md).
@@ -101,7 +101,7 @@ Como **administrador**, quiero que **cada pantalla y acción verifique permisos 
 2. Dado cualquier usuario, cuando ve una pantalla, entonces solo aparecen los botones de las acciones
    que puede ejecutar.
 
-#### HU-03 Gestión de usuarios · *Should* · Bimestre 1 (rol y estado) · Sprint 5 (resto)
+#### HU-03 Gestión de usuarios · *Should* 
 
 Como **administrador**, quiero **crear, editar y desactivar usuarios** para **controlar quién accede**.
 
@@ -112,7 +112,7 @@ Como **administrador**, quiero **crear, editar y desactivar usuarios** para **co
    recargan con los permisos nuevos y el cambio queda en la bitácora.
 4. ✅ Nadie puede cambiar su propio rol ni desactivar su propia cuenta.
 
-#### HU-39 Registrarme (SignUp) · *Must* · Bimestre 1 · Guía 3.3
+#### HU-39 Registrarme (SignUp) · *Must* 
 
 Como **persona que empieza a trabajar en el hotel**, quiero **crear mi cuenta** para **usar el
 sistema sin esperar a que alguien me la cree**.
@@ -130,7 +130,7 @@ sistema sin esperar a que alguien me la cree**.
 5. Dadas más de 10 cuentas creadas en una hora desde la misma conexión, entonces se rechazan las
    siguientes.
 
-#### HU-40 Recuperar mi clave · *Must* · Bimestre 1 · Guía 3.3
+#### HU-40 Recuperar mi clave · *Must* 
 
 Como **miembro del personal**, quiero **restablecer mi clave si la olvidé** para **volver a entrar
 sin pedir ayuda**.

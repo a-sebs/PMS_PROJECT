@@ -153,23 +153,12 @@ gitGraph
 El equipo puede usar asistentes (Claude, Gemini u otros) como herramienta, con estas reglas:
 
 1. **Todo entra por Pull Request**, sin excepción, y pasa revisión humana.
-2. **Quien abre el PR responde por el código**: debe poder explicarlo línea por línea en la demo.
-3. **El feedback cruzado vive en el repositorio**: si un asistente revisa el trabajo de otro, sus
+2. **El feedback cruzado vive en el repositorio**: si un asistente revisa el trabajo de otro, sus
    observaciones se dejan como comentarios de revisión en el PR, y las respuestas o correcciones
    quedan en la misma rama. Así hay trazabilidad de qué se cambió y por qué.
-4. Las decisiones de diseño sugeridas por una IA se registran como ADR igual que cualquier otra.
 
-## 8. Seguimiento y métricas
 
-| Métrica | Fuente | Para qué |
-| --- | --- | --- |
-| Velocidad (puntos por sprint) | GitHub Projects | Planificar el siguiente sprint con datos |
-| Burndown del sprint | Milestone de GitHub | Detectar atrasos a mitad de sprint |
-| Tiempo de ciclo de un PR | GitHub | Evitar PRs gigantes que nadie revisa |
-| Estado del CI y cobertura | GitHub Actions | Calidad sostenida (O4) |
-| Riesgos abiertos | [Registro de riesgos](riesgos.md) | Revisión en cada retrospectiva |
-
-## 9. Gestión de cambios
+## 8. Gestión de cambios
 
 - Un cambio de alcance se propone como issue con la etiqueta `cambio-de-alcance`; el Product Owner
   decide si entra y qué sale a cambio.

@@ -59,16 +59,3 @@ aplicación**. Esa organización prepara el segundo bimestre ([ADR-0012](../03-d
 | Calidad: 5+ pruebas automatizadas | 145 pruebas (unitarias, de integración con PostgreSQL real y de tiempo real con dos clientes) | `npm test` |
 | Calidad: README | Instrucciones para ejecutar el proyecto | [README](../../README.md) |
 
-## 4. Para la defensa
-
-- **Cómo funciona Socket.IO sobre WebSocket** (handshake, eventos, mecanismos de respaldo): ver la
-  sección 2 del [contrato de tiempo real](../03-diseno/tiempo-real.md#2-cómo-funciona-socketio-sobre-websocket),
-  con paquetes reales capturados de esta aplicación.
-- **Demostración sugerida (10 min):**
-  1. Crear una cuenta en `/signup` mientras administración tiene la aplicación abierta (le llega el aviso).
-  2. Registrar un huésped con una cédula mal escrita: el error aparece antes de enviar; con
-     JavaScript desactivado, el servidor responde lo mismo.
-  3. Buscar "nunez" (encuentra "Núñez"), filtrar por nacionalidad, paginar y eliminar con confirmación.
-  4. Abrir el chat en dos navegadores: mensajes en vivo, "Conectados ahora", insignia de no leídos.
-  5. "¿Olvidaste tu clave?" → bandeja de pruebas → enlace de un solo uso (el segundo intento falla).
-  6. Mostrar `npm test` y el informe de Lighthouse.
