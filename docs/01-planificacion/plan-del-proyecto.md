@@ -113,17 +113,20 @@ Los roles se reparten según el tamaño del equipo; una persona puede tener vari
 
 ## 5. Flujo de trabajo con Git
 
-Usamos **GitHub Flow**: `main` siempre funciona y todo cambio entra por Pull Request.
+Las ramas de trabajo se integran por PR en `develop` para probarlas en staging. Tras validar una versión, un PR de `develop` a `main` la promueve a producción.
 
 ```mermaid
 gitGraph
     commit id: "base"
+    branch develop
     branch feat/HU-07-tablero-en-vivo
     checkout feat/HU-07-tablero-en-vivo
     commit id: "feat(rooms): tarjeta"
     commit id: "test(rooms): transiciones"
+    checkout develop
+    merge feat/HU-07-tablero-en-vivo id: "PR #12 (staging)"
     checkout main
-    merge feat/HU-07-tablero-en-vivo id: "PR #12 (squash)"
+    merge develop id: "PR de promoción"
     commit id: "v0.1.0" tag: "v0.1.0"
 ```
 
@@ -132,7 +135,7 @@ gitGraph
 - **Commits**: [Conventional Commits](https://www.conventionalcommits.org/es/) con el tipo en inglés y
   la descripción en español: `feat(reservations): bloqueo temporal de fechas`.
 - **Pull Requests**: enlazan el issue (`Closes #12`), usan la plantilla con la DoD, requieren CI en
-  verde y 1 aprobación. Se integran con *squash merge*.
+  verde y 1 aprobación. Las ramas de trabajo se integran en `develop` con *squash merge*. Para promover a `main`, un merge commit conserva la historia compartida.
 - **Protección de `main`**: sin push directo; requiere PR, revisión y CI.
 - **Versiones**: una etiqueta por sprint cerrado (`v0.1.0` = Sprint 1 … `v1.0.0` = entrega final) y
   el [CHANGELOG](../../CHANGELOG.md) actualizado.

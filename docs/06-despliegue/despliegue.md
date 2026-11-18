@@ -6,26 +6,23 @@
 | --- | --- | --- | --- |
 | Local | Desarrollo diario | Docker Compose (`pms_dev`) | `npm run dev` |
 | Pruebas | Suite automatizada | `pms_test` (local) / servicio de PostgreSQL (CI) | `npm test`, GitHub Actions |
-| Demo (producción) | Demos ante el docente y entrega final | PostgreSQL gestionado del proveedor | Despliegue desde `main` |
+| Preproducción (staging) | Probar cambios integrados del equipo | Proyecto Neon `aurora-staging` | Servicio Render `aurora-pms-staging` desde `develop` |
+| Producción (demo estable) | Presentar una versión validada | Proyecto Neon `aurora-prod` | Servicio Render `aurora-pms` desde `main` |
 
-## 2. Primer despliegue de la demo en Render y Neon
+## 2. Primer despliegue en Render y Neon
 
-1. Integra el proyecto en `main` mediante un PR en `a-sebs/PMS_PROJECT`. Revisa los dos trabajos
-   de GitHub Actions (Node 22 y 24) en el PR y en el commit integrado. Cada trabajo usa su propia
-   base temporal `pms_test`. El flujo está en [.github/workflows/ci.yml](../../.github/workflows/ci.yml).
-2. En Neon, crea un proyecto **Free** con PostgreSQL 17. En **Connect**, elige la base y su rol
-   propietario, desactiva **Connection pooling** y copia la cadena de conexión completa con TLS.
-   Las migraciones usan un bloqueo de sesión y crean las extensiones `btree_gist` y `pg_trgm`.
-   [Conexiones de Neon](https://neon.com/docs/connect/connection-pooling)
-3. Cuando el CI de `main` esté en verde, entra en Render y elige **New → Blueprint**. Conecta tu
-   cuenta de GitHub, selecciona el repositorio y la rama `main`. Render leerá
-   [render.yaml](../../render.yaml). Introduce la cadena directa de Neon en `DATABASE_URL` y
-   confirma que el resumen muestra un solo **Web Service Free**. Aplica el Blueprint.
-   [Blueprints de Render](https://render.com/docs/infrastructure-as-code)
-4. En el servicio de Render, abre **Events** y **Logs**. El contenedor ejecuta las migraciones
-   antes de iniciar Express. Abre la URL HTTPS asignada al servicio y realiza la verificación de
-   la sección 5. Para las siguientes versiones, Render espera los checks del nuevo commit de
-   `main` con **After CI Checks Pass**. [Integración con CI](https://render.com/docs/deploys)
+Activa **staging primero**. Producción se habilita después de la primera promoción de la aplicación a `main`.
+
+| Orden | Rama del Blueprint y del servicio | Blueprint Path en Render | Proyecto Neon Free |
+| --- | --- | --- | --- |
+| 1. Staging | `develop` | [render.develop.yaml](../../render.develop.yaml) | `aurora-staging` |
+| 2. Producción | `main` | [render.yaml](../../render.yaml) | `aurora-prod` |
+
+1. Integra la configuración en `develop`. GitHub Actions comprueba los PR dirigidos a ambas ramas y los pushes a cada una con Node 22 y 24. Cada trabajo usa su propia base temporal `pms_test`. [Workflow de CI](../../.github/workflows/ci.yml)
+2. En Neon crea el proyecto **Free** del entorno con PostgreSQL 17. En **Connect**, selecciona su base y rol propietario, desactiva **Connection pooling** y copia la conexión directa con TLS. El migrador usa bloqueos de sesión y crea las extensiones `btree_gist` y `pg_trgm`. [Conexiones de Neon](https://neon.com/docs/connect/connection-pooling)
+3. Con el CI de la rama en verde, en Render abre **New → Blueprint**, conecta GitHub y selecciona `a-sebs/PMS_PROJECT`. Introduce la rama y el **Blueprint Path** de la misma fila de la tabla. Pon la conexión Neon de ese entorno en `DATABASE_URL`. Revisa que se creará un solo **Web Service Free** y aplica. Cada servicio genera su propio `SESSION_SECRET` y recibe su propia URL HTTPS. [Blueprints de Render](https://render.com/docs/infrastructure-as-code)
+4. Abre **Events** y **Logs** del servicio. El Dockerfile migra la base de ese entorno antes de iniciar Express. Comprueba su URL con la sección 5. Los cambios de código posteriores se publican cuando pasan los checks de la rama vinculada. [Integración con CI](https://render.com/docs/deploys)
+5. Tras validar staging, abre el PR con **base `main` ← compare `develop`**. Integra la versión revisada y espera al CI de `main`. Repite los pasos 2 a 4 para producción con su propia fila de la tabla. En versiones posteriores basta repetir el PR de promoción y verificar la nueva versión. Los usuarios, sesiones y datos de staging permanecen en su proyecto Neon.
 
 Para una demo con usuarios de varios roles y habitaciones, tras el primer arranque ejecuta una
 vez el seed desde tu equipo. Usa una base de demo con datos ficticios. En Bash, este bloque pide
@@ -73,11 +70,13 @@ de su proxy HTTPS y `TRUST_PROXY=true`. Verificación: en las herramientas del n
 
 ```mermaid
 flowchart LR
-    PR[Pull Request] --> CI{CI en verde?}
+    PR[PR a develop] --> CI{CI en verde?}
     CI -- no --> Fix[Corregir]
     Fix --> PR
-    CI -- sí --> Merge[Squash merge a main]
-    Merge --> Build[El proveedor construye la imagen]
+    CI -- sí --> Stage[Integrar en develop y desplegar en staging tras el CI]
+    Stage --> Verify[Validar staging]
+    Verify --> Promote[PR de develop a main y revisión]
+    Promote --> Build[CI de main en verde y build de producción]
     Build --> Release["Release: node scripts/migrate.js"]
     Release --> Start["Arranque: node src/main.js"]
     Start --> Health{"/health = 200?"}
