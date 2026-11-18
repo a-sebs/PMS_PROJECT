@@ -6,26 +6,44 @@
 | --- | --- | --- | --- |
 | Local | Desarrollo diario | Docker Compose (`pms_dev`) | `npm run dev` |
 | Pruebas | Suite automatizada | `pms_test` (local) / servicio de PostgreSQL (CI) | `npm test`, GitHub Actions |
-| Preproducción (staging) | Probar cambios integrados del equipo | Proyecto Neon `aurora-staging` | Servicio Render `aurora-pms-staging` desde `develop` |
-| Producción (demo estable) | Presentar una versión validada | Proyecto Neon `aurora-prod` | Servicio Render `aurora-pms` desde `main` |
+| Preproducción (staging) | Probar cambios integrados del equipo | Rama Neon `develop` | Servicio Render `aurora-pms-staging` desde `develop` |
+| Producción (demo estable) | Presentar una versión validada | Rama Neon `production` (o `main`) | Servicio Render `aurora-pms` desde `main` |
 
 ## 2. Primer despliegue en Render y Neon
 
 Activa **staging primero**. Producción se habilita después de la primera promoción de la aplicación a `main`.
 
-| Orden | Rama del Blueprint y del servicio | Blueprint Path en Render | Proyecto Neon Free |
+| Orden | Rama del Blueprint y del servicio | Blueprint Path en Render | Rama del mismo proyecto Neon Free |
 | --- | --- | --- | --- |
-| 1. Staging | `develop` | [render.develop.yaml](../../render.develop.yaml) | `aurora-staging` |
-| 2. Producción | `main` | [render.yaml](../../render.yaml) | `aurora-prod` |
+| 1. Staging | `develop` | [render.develop.yaml](../../render.develop.yaml) | `develop` |
+| 2. Producción | `main` | [render.yaml](../../render.yaml) | `production` (o `main`) |
 
 1. Integra la configuración en `develop`. GitHub Actions comprueba los PR dirigidos a ambas ramas y los pushes a cada una con Node 22 y 24. Cada trabajo usa su propia base temporal `pms_test`. [Workflow de CI](../../.github/workflows/ci.yml)
-2. En Neon crea el proyecto **Free** del entorno con PostgreSQL 17. En **Connect**, selecciona su base y rol propietario, desactiva **Connection pooling** y copia la conexión directa con TLS. El migrador usa bloqueos de sesión y crea las extensiones `btree_gist` y `pg_trgm`. [Conexiones de Neon](https://neon.com/docs/connect/connection-pooling)
-3. Con el CI de la rama en verde, en Render abre **New → Blueprint**, conecta GitHub y selecciona `a-sebs/PMS_PROJECT`. Introduce la rama y el **Blueprint Path** de la misma fila de la tabla. Pon la conexión Neon de ese entorno en `DATABASE_URL`. Revisa que se creará un solo **Web Service Free** y aplica. Cada servicio genera su propio `SESSION_SECRET` y recibe su propia URL HTTPS. [Blueprints de Render](https://render.com/docs/infrastructure-as-code)
-4. Abre **Events** y **Logs** del servicio. El Dockerfile migra la base de ese entorno antes de iniciar Express. Comprueba su URL con la sección 5. Los cambios de código posteriores se publican cuando pasan los checks de la rama vinculada. [Integración con CI](https://render.com/docs/deploys)
-5. Tras validar staging, abre el PR con **base `main` ← compare `develop`**. Integra la versión revisada y espera al CI de `main`. Repite los pasos 2 a 4 para producción con su propia fila de la tabla. En versiones posteriores basta repetir el PR de promoción y verificar la nueva versión. Los usuarios, sesiones y datos de staging permanecen en su proyecto Neon.
+2. Usa un solo proyecto Neon **Free** para Aurora. Reserva la rama raíz para producción (normalmente `production` en la consola). En **Branches → New branch**, crea `develop` desde esa raíz, con un endpoint de lectura/escritura y sin caducidad. Una rama hija parte del esquema y los datos de su origen en el momento de crearla. [Ramas de Neon](https://neon.com/docs/manage/branches)
 
-Para una demo con usuarios de varios roles y habitaciones, tras el primer arranque ejecuta una
-vez el seed desde tu equipo. Usa una base de demo con datos ficticios. En Bash, este bloque pide
+   En **Connect**, elige la rama de la fila correspondiente, su base y rol propietario, desactiva **Connection pooling** y copia la conexión directa con TLS. El migrador usa bloqueos de sesión y crea las extensiones `btree_gist` y `pg_trgm`. [Conexiones de Neon](https://neon.com/docs/connect/connection-pooling)
+3. Con el CI de la rama en verde, en Render abre **New → Blueprint**, conecta GitHub y selecciona `a-sebs/PMS_PROJECT`. Introduce la rama y el **Blueprint Path** de la misma fila de la tabla. Pon la conexión directa de la rama Neon de ese entorno en `DATABASE_URL`. Revisa que se creará un solo **Web Service Free** y aplica. Cada servicio genera su propio `SESSION_SECRET` y recibe su propia URL HTTPS. [Blueprints de Render](https://render.com/docs/infrastructure-as-code)
+4. Abre **Events** y **Logs** del servicio. El Dockerfile migra la base de ese entorno antes de iniciar Express. Comprueba su URL con la sección 5. Los cambios de código posteriores se publican cuando pasan los checks de la rama vinculada. [Integración con CI](https://render.com/docs/deploys)
+5. Tras validar staging, abre el PR con **base `main` ← compare `develop`**. Integra la versión revisada y espera al CI de `main`. Copia la conexión de la rama raíz en **Connect** y sigue los pasos 3 y 4 para producción. En versiones posteriores basta repetir el PR de promoción y verificar la nueva versión. Los usuarios, sesiones y datos de staging permanecen en la rama Neon `develop`. El despliegue en producción aplica las migraciones SQL del repositorio a la rama raíz.
+
+### Datos de prueba en staging
+
+El Blueprint de staging ejecuta las migraciones, carga la demo una vez y arranca la aplicación.
+Una base vacía recibe 5 cuentas, 4 tipos de habitación, 22 habitaciones, 48 huéspedes y 5 mensajes.
+En Render, la variable privada `SEED_PASSWORD` contiene la clave inicial de las cuentas creadas
+por el servicio, entre ellas `admin@aurora.test`. Los siguientes arranques conservan las ediciones,
+las cuentas existentes y sus contraseñas.
+
+En un staging ya desplegado se puede ejecutar esa misma carga desde el repositorio con
+`node --env-file=.env.staging scripts/seed-staging.js`. Define en ese archivo local
+`DATABASE_URL` de la rama de staging y una contraseña privada en `SEED_PASSWORD`.
+Las cuentas nuevas usan la clave de la primera carga. Si se cargaron desde tu equipo,
+la clave se consulta en ese archivo.
+
+### Datos opcionales para la demo de producción
+
+Para una demo con usuarios de varios roles y habitaciones en producción, tras el primer arranque ejecuta una
+vez el seed desde tu equipo. Este comando restablece la contraseña de las cuentas de demostración. Usa una base de demo con datos ficticios. En Bash, este bloque pide
 la conexión y una contraseña propia para las cuentas de demo, sin guardarlas en el historial.
 
 ```bash
