@@ -107,14 +107,14 @@ La CSP del proyecto prohíbe JavaScript y CSS en línea. En la práctica:
 ## 7. Flujo de Git en la práctica
 
 ```bash
-git switch main && git pull
+git switch develop && git pull
 git switch -c feat/HU-12-crear-reserva
 # … trabajo …
 npm run check
 git add -A
 git commit -m "feat(reservations): crear reserva con código de confirmación"
 git push -u origin feat/HU-12-crear-reserva
-# Abrir el PR en GitHub con la plantilla y enlazar el issue (Closes #12)
+# Abrir el PR hacia develop en GitHub con la plantilla y enlazar el issue (Closes #12)
 ```
 
 Tipos de commit: `feat`, `fix`, `docs`, `test`, `refactor`, `chore`, `ci`, `style`, `perf`.

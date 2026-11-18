@@ -5,9 +5,7 @@
 
 ## Decisión
 
-GitHub aloja el código. GitHub Actions verifica cada PR a `main` y cada cambio integrado.
-Render Free publica el Dockerfile del monolito en una instancia con HTTPS y WebSocket seguro.
-Neon Free conserva los datos de PostgreSQL. Ambos planes encajan con una demo de uso intermitente.
+GitHub Actions verifica los PR y cambios integrados en `develop` y `main`. Cada rama tiene un servicio Render Free que publica el monolito por HTTPS y WebSocket seguro. Staging sigue a `develop` y la demo estable sigue a `main` después de una promoción revisada. Cada servicio tiene un proyecto Neon Free, su propia conexión PostgreSQL y su propio secreto de sesión. Ambos planes encajan con una demo de uso intermitente.
 [WebSockets en Render](https://render.com/docs/websocket) · [Plan gratuito de Neon](https://neon.com/pricing)
 
 El proceso usa la conexión directa de Neon porque el migrador mantiene un bloqueo consultivo
