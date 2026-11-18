@@ -1,0 +1,68 @@
+<article class="key-tag key-tag--<%= room.tone %>" id="room-<%= room.id %>" data-fragment
+         data-room-id="<%= room.id %>" data-version="<%= room.version %>"
+         data-code="<%= room.code %>" data-groups="<%= room.groups.join(' ') %>"
+         aria-labelledby="room-<%= room.id %>-number">
+  <div class="key-tag__fob">
+    <span class="key-tag__hole" aria-hidden="true"></span>
+    <h3 class="key-tag__number" id="room-<%= room.id %>-number">
+      <span class="visually-hidden">Habitación </span><%= room.number %>
+    </h3>
+    <p class="key-tag__type"><%= room.typeName %></p>
+  </div>
+
+  <p class="key-tag__status">
+    <svg class="icon" aria-hidden="true"><use href="/img/icons.svg#<%= room.icon %>"></use></svg>
+    <span class="key-tag__code"><%= room.code %></span>
+    <span class="key-tag__label"><%= room.label %></span>
+  </p>
+
+  <% if (room.housekeepingStatus === 'cleaning') { %>
+  <p class="key-tag__note">En limpieza ahora</p>
+  <% } %>
+  <% if (room.isOutOfOrder) { %>
+  <p class="key-tag__note key-tag__note--ooo"><%= room.outOfOrderReason %></p>
+  <% } %>
+
+  <% if (room.housekeepingActions.length > 0 || room.canRelease || room.canBlock) { %>
+  <div class="key-tag__actions">
+    <% if (room.housekeepingActions.length > 0) { %>
+    <form method="post" action="/rooms/<%= room.id %>/housekeeping" data-enhance>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="version" value="<%= room.version %>">
+      <% for (const action of room.housekeepingActions) { %>
+      <button class="button" type="submit" name="status" value="<%= action.to %>"><%= action.label %></button>
+      <% } %>
+    </form>
+    <% } %>
+
+    <% if (room.canRelease) { %>
+    <form method="post" action="/rooms/<%= room.id %>/out-of-order" data-enhance>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="version" value="<%= room.version %>">
+      <button class="button" type="submit" name="action" value="release">Liberar habitación</button>
+    </form>
+    <% } %>
+
+    <% if (room.canBlock) { %>
+    <details class="key-tag__block">
+      <summary class="button button--quiet">Bloquear habitación</summary>
+      <form class="form form--compact" method="post" action="/rooms/<%= room.id %>/out-of-order" data-enhance>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="version" value="<%= room.version %>">
+        <input type="hidden" name="action" value="block">
+        <label class="field__label" for="reason-<%= room.id %>">Motivo del bloqueo</label>
+        <input class="field__input" id="reason-<%= room.id %>" name="reason" required
+               minlength="3" maxlength="200" autocomplete="off" placeholder="Ej.: fuga en el lavabo">
+        <button class="button button--danger" type="submit">Bloquear</button>
+      </form>
+    </details>
+    <% } %>
+  </div>
+  <% } %>
+
+  <% if (room.updatedByName) { %>
+  <p class="key-tag__meta">
+    <%= room.updatedByName %>, <time datetime="<%= room.updatedAt %>"><%= formatTime(room.updatedAt) %></time>
+  </p>
+  <% } %>
+</article>

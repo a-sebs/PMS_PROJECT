@@ -1,0 +1,29 @@
+<section class="outbox" aria-labelledby="outbox-title">
+  <header class="page-header">
+    <h1 class="page-header__title" id="outbox-title">Bandeja de pruebas</h1>
+    <p class="page-header__lead">Correos simulados que la aplicación habría enviado. Solo existe en
+      desarrollo: en producción se reemplaza por un servidor de correo real.</p>
+  </header>
+
+  <% if (emails.length === 0) { %>
+  <p class="empty-state">Todavía no hay correos. Prueba «¿Olvidaste tu clave?» en el inicio de sesión.</p>
+  <% } else { %>
+  <ol class="outbox__list">
+    <% for (const email of emails) { %>
+    <li class="outbox__item">
+      <article>
+        <header class="outbox__header">
+          <h2 class="outbox__subject"><%= email.subject %></h2>
+          <p class="outbox__meta">Para <strong><%= email.to %></strong> · <time datetime="<%= email.createdAt %>"><%= formatDateTime(email.createdAt) %></time></p>
+        </header>
+        <pre class="outbox__body"><%= email.body %></pre>
+        <% if (email.linkUrl) { %>
+        <a class="button button--primary" href="<%= email.linkUrl %>">Abrir el enlace</a>
+        <% } %>
+      </article>
+    </li>
+    <% } %>
+  </ol>
+  <% } %>
+  <p><a class="text-link" href="/login">Ir al inicio de sesión</a></p>
+</section>

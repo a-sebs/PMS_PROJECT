@@ -1,0 +1,53 @@
+<header class="page-header">
+  <h1 class="page-header__title">Hola, <%= firstName %></h1>
+  <p class="page-header__lead">Así está el hotel en este momento. Este panel se actualiza solo.</p>
+</header>
+
+<nav class="shortcuts" aria-label="Accesos rápidos">
+  <ul class="shortcuts__list">
+    <% for (const shortcut of shortcuts) { %>
+    <li>
+      <a class="shortcut" href="<%= shortcut.href %>">
+        <svg class="shortcut__icon" aria-hidden="true"><use href="/img/icons.svg#<%= shortcut.icon %>"></use></svg>
+        <span class="shortcut__title"><%= shortcut.title %></span>
+        <span class="shortcut__text"><%= shortcut.text %></span>
+      </a>
+    </li>
+    <% } %>
+  </ul>
+</nav>
+
+<section class="focus" aria-labelledby="focus-title">
+  <h2 class="visually-hidden" id="focus-title">Lo más importante para tu turno</h2>
+  <p class="focus__figure">
+    <span class="focus__value"><%= focus.value %></span>
+    <span class="focus__text"><%= focus.text %></span>
+  </p>
+  <% if (focus.hint) { %>
+  <p class="focus__hint"><%= focus.hint %></p>
+  <% } %>
+  <a class="button button--primary" href="<%= focus.link.href %>"><%= focus.link.label %></a>
+</section>
+
+<section class="composition" aria-labelledby="composition-title">
+  <h2 class="composition__title" id="composition-title">Las <%= total %> habitaciones del hotel</h2>
+  <svg class="composition__bar" viewBox="0 0 100 10" preserveAspectRatio="none" role="img"
+       aria-label="<%= compositionLabel %>">
+    <% for (const segment of segments) { %>
+      <% if (segment.width > 0) { %>
+      <rect class="segment segment--<%= segment.id %>" x="<%= segment.x.toFixed(3) %>" y="0"
+            width="<%= segment.width.toFixed(3) %>" height="10"></rect>
+      <% } %>
+    <% } %>
+  </svg>
+  <ul class="composition__legend">
+    <% for (const segment of segments) { %>
+    <li class="legend legend--<%= segment.id %>">
+      <span class="legend__swatch" aria-hidden="true"></span>
+      <span class="legend__label"><%= segment.label %></span>
+      <span class="legend__value"><%= segment.value %></span>
+    </li>
+    <% } %>
+  </ul>
+  <p class="composition__note">Ocupación sobre habitaciones vendibles: <strong><%= Math.round(occupancyRate * 100) %> %</strong></p>
+</section>

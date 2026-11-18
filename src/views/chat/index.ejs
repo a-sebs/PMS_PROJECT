@@ -1,0 +1,92 @@
+<div class="chat" data-chat data-room="<%= room.slug %>" data-last-id="<%= lastId %>" data-history="<%= isHistoryPage ? 'true' : 'false' %>">
+  <aside class="chat__sidebar">
+    <nav class="chat-rooms" aria-labelledby="rooms-title">
+      <h2 class="chat__side-title" id="rooms-title">Salas</h2>
+      <ul class="chat-rooms__list">
+        <% for (const item of rooms) { %>
+        <li>
+          <a class="chat-rooms__link" href="/chat/<%= item.slug %>"<%- item.slug === room.slug ? ' aria-current="page"' : '' %>>
+            <span class="chat-rooms__hash" aria-hidden="true">#</span>
+            <span class="chat-rooms__name"><%= item.name %></span>
+            <span class="badge badge--count" data-room-unread="<%= item.slug %>" data-count="<%= item.unread %>"<%- item.unread > 0 ? '' : ' hidden' %>><span data-count-value><%= item.unread > 99 ? '99+' : item.unread %></span><span class="visually-hidden"> sin leer</span></span>
+          </a>
+        </li>
+        <% } %>
+      </ul>
+    </nav>
+
+    <section class="chat-online" aria-labelledby="online-title">
+      <h2 class="chat__side-title" id="online-title">Conectados ahora <span class="chat-online__count" data-online-count>(<%= online.length %>)</span></h2>
+      <ul class="chat-online__list" data-online-list>
+        <% for (const person of online) { %>
+        <li class="chat-online__item">
+          <span class="presence-dot" aria-hidden="true"></span>
+          <span class="chat-online__name"><%= person.name %><%= person.id === currentUser.id ? ' (tú)' : '' %></span>
+          <span class="chat-online__role"><%= person.roleLabel %></span>
+        </li>
+        <% } %>
+      </ul>
+      <p class="chat-online__empty" data-online-empty<%- online.length > 0 ? ' hidden' : '' %>>Nadie más está conectado.</p>
+    </section>
+  </aside>
+
+  <section class="chat__main" aria-labelledby="room-title">
+    <header class="chat__header">
+      <h1 class="chat__title" id="room-title"><span aria-hidden="true">#</span> <%= room.name %></h1>
+      <p class="chat__description"><%= room.description %></p>
+    </header>
+
+    <div class="chat__log" data-chat-log tabindex="0" aria-label="Mensajes de la sala <%= room.name %>">
+      <% if (olderHref) { %>
+      <p class="chat__older"><a class="button button--small" href="<%= olderHref %>" data-load-older>Ver mensajes anteriores</a></p>
+      <% } %>
+      <% if (isHistoryPage) { %>
+      <p class="chat__older"><a class="text-link" href="/chat/<%= room.slug %>">Volver a los mensajes recientes</a></p>
+      <% } %>
+      <%# role="log": los lectores de pantalla anuncian cada mensaje nuevo que se agrega. %>
+      <div role="log" aria-live="polite" aria-relevant="additions" data-chat-live>
+        <ol class="chat__messages" data-chat-messages>
+          <% for (const message of messages) { %>
+          <%- include('../partials/chat-message', { message }) %>
+          <% } %>
+        </ol>
+      </div>
+      <p class="chat__empty" data-chat-empty<%- messages.length > 0 ? ' hidden' : '' %>>Todavía no hay mensajes en esta sala. Escribe el primero.</p>
+    </div>
+
+    <form class="chat__composer" method="post" action="/chat/<%= room.slug %>/messages" data-chat-form data-validate>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="field chat__field">
+        <label class="visually-hidden" for="chat-body">Mensaje para la sala <%= room.name %></label>
+        <textarea class="field__input chat__input" id="chat-body" name="body" rows="2" required maxlength="<%= maxLength %>"
+                  placeholder="Escribe un mensaje…" aria-describedby="chat-help chat-body-error"
+                  data-msg-required="Escribe un mensaje."></textarea>
+        <p class="field__error" id="chat-body-error" data-field-error hidden></p>
+        <p class="chat__help" id="chat-help">Enter envía · Mayús + Enter agrega una línea · máximo <%= maxLength %> caracteres.</p>
+      </div>
+      <button class="button button--primary chat__send" type="submit">
+        <svg class="icon" aria-hidden="true"><use href="/img/icons.svg#send"></use></svg>
+        Enviar
+      </button>
+    </form>
+  </section>
+</div>
+
+<template id="chat-message-template">
+  <li class="chat-message">
+    <p class="chat-message__meta">
+      <span class="chat-message__author"></span>
+      <span class="chat-message__role"></span>
+      <time class="chat-message__time"></time>
+    </p>
+    <p class="chat-message__body"></p>
+  </li>
+</template>
+
+<template id="online-user-template">
+  <li class="chat-online__item">
+    <span class="presence-dot" aria-hidden="true"></span>
+    <span class="chat-online__name"></span>
+    <span class="chat-online__role"></span>
+  </li>
+</template>

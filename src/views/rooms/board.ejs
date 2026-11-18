@@ -1,0 +1,53 @@
+<div class="board">
+  <div class="board__main">
+    <header class="page-header">
+      <h1 class="page-header__title">Habitaciones</h1>
+      <p class="page-header__lead"><%= total %> habitaciones en <%= floors.length %> pisos. Los cambios aparecen solos, sin recargar.</p>
+    </header>
+
+    <nav class="filters" aria-label="Filtrar por estado">
+      <a class="chip" id="filtro-all" href="#filtro-all" data-filter="all">
+        Todas <span class="chip__count" data-count="all"><%= total %></span>
+      </a>
+      <% for (const group of groups) { %>
+      <a class="chip chip--<%= group.id %>" id="filtro-<%= group.id %>" href="#filtro-<%= group.id %>" data-filter="<%= group.id %>">
+        <%= group.label %> <span class="chip__count" data-count="<%= group.id %>"><%= group.count %></span>
+      </a>
+      <% } %>
+    </nav>
+
+    <% for (const floor of floors) { %>
+    <section class="floor" aria-labelledby="floor-<%= floor.floor %>">
+      <h2 class="floor__title" id="floor-<%= floor.floor %>">Piso <%= floor.floor %></h2>
+      <div class="key-rack">
+        <% for (const room of floor.rooms) { %>
+        <%- include('../partials/room-card', { room }) %>
+        <% } %>
+      </div>
+    </section>
+    <% } %>
+
+    <p class="board__empty">Ninguna habitación coincide con este filtro ahora mismo.</p>
+  </div>
+
+  <% if (activity) { %>
+  <aside class="activity" aria-labelledby="activity-title">
+    <h2 class="activity__title" id="activity-title">Actividad reciente</h2>
+    <ol class="activity__list" data-activity-list>
+      <% for (const item of activity) { %>
+      <%- include('../partials/activity-item', { item }) %>
+      <% } %>
+    </ol>
+    <% if (activity.length === 0) { %>
+    <p class="activity__empty" data-activity-empty>Aquí verás quién cambia qué, en el momento en que ocurre.</p>
+    <% } %>
+    <template data-activity-template>
+      <li class="activity__item">
+        <time class="activity__time"></time>
+        <p class="activity__summary"></p>
+        <p class="activity__actor"></p>
+      </li>
+    </template>
+  </aside>
+  <% } %>
+</div>

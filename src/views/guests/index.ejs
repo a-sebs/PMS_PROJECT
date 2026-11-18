@@ -1,0 +1,103 @@
+<header class="page-header page-header--split">
+  <div>
+    <h1 class="page-header__title">Huéspedes</h1>
+    <p class="page-header__lead">Busca, registra y actualiza los datos de quienes se hospedan en el hotel.</p>
+  </div>
+  <% if (can('guests.manage')) { %>
+  <a class="button button--primary" href="/guests/new">
+    <svg class="icon" aria-hidden="true"><use href="/img/icons.svg#plus"></use></svg>
+    Nuevo huésped
+  </a>
+  <% } %>
+</header>
+
+<section class="toolbar" aria-label="Buscar y filtrar huéspedes">
+  <form class="toolbar__search" method="get" action="/guests" role="search">
+    <div class="field field--grow">
+      <label class="field__label" for="q">Buscar por nombre, documento o correo</label>
+      <input class="field__input" id="q" name="q" type="search" value="<%= filters.q ?? '' %>"
+             maxlength="100" placeholder="Ej.: Salazar, 1710034065, ana@correo.com" autocomplete="off">
+    </div>
+    <div class="field">
+      <label class="field__label" for="nationality">Nacionalidad</label>
+      <select class="field__input" id="nationality" name="nationality">
+        <option value="">Todas</option>
+        <% for (const country of countries) { %>
+        <option value="<%= country.value %>"<%- filters.nationality === country.value ? ' selected' : '' %>><%= country.label %></option>
+        <% } %>
+      </select>
+    </div>
+    <div class="field">
+      <label class="field__label" for="perPage">Por página</label>
+      <select class="field__input" id="perPage" name="perPage">
+        <% for (const size of pageSizes) { %>
+        <option value="<%= size %>"<%- filters.perPage === size ? ' selected' : '' %>><%= size %></option>
+        <% } %>
+      </select>
+    </div>
+    <div class="toolbar__actions">
+      <button class="button button--primary" type="submit">Buscar</button>
+      <% if (isFiltered) { %>
+      <a class="button button--quiet" href="/guests">Limpiar</a>
+      <% } %>
+    </div>
+  </form>
+
+  <form class="toolbar__lookup" method="get" action="/guests/lookup">
+    <div class="field">
+      <label class="field__label" for="lookup-id">Ir al huésped N.º</label>
+      <input class="field__input field__input--short" id="lookup-id" name="id" type="number"
+             min="1" step="1" inputmode="numeric" required placeholder="12">
+    </div>
+    <button class="button" type="submit">Abrir</button>
+  </form>
+</section>
+
+<p class="results-summary" role="status">
+  <% if (total === 0) { %>
+    <%= isFiltered ? 'Ningún huésped coincide con la búsqueda.' : 'Todavía no hay huéspedes registrados.' %>
+  <% } else { %>
+    Mostrando <strong><%= from %>–<%= to %></strong> de <strong><%= total %></strong> <%= total === 1 ? 'huésped' : 'huéspedes' %><%= isFiltered ? ' que coinciden' : '' %>.
+  <% } %>
+</p>
+
+<% if (guests.length > 0) { %>
+<div class="table-wrap">
+  <table class="data-table data-table--cards">
+    <caption class="visually-hidden">Huéspedes, página <%= page %> de <%= totalPages %></caption>
+    <thead>
+      <tr>
+        <th scope="col">Huésped</th>
+        <th scope="col">Documento</th>
+        <th scope="col">Nacionalidad</th>
+        <th scope="col">Teléfono</th>
+        <th scope="col"><span class="visually-hidden">Acciones</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for (const guest of guests) { %>
+      <tr>
+        <th scope="row" data-label="Huésped">
+          <a class="data-table__primary" href="/guests/<%= guest.id %>"><%= guest.lastName %>, <%= guest.firstName %></a>
+          <span class="data-table__secondary">N.º <%= guest.id %> · <%= guest.email %></span>
+        </th>
+        <td data-label="Documento"><span class="data-table__secondary"><%= guest.documentLabel %></span> <span class="mono"><%= guest.documentNumber %></span></td>
+        <td data-label="Nacionalidad"><%= guest.nationalityName %></td>
+        <td data-label="Teléfono"><span class="mono"><%= guest.phoneDisplay %></span></td>
+        <td class="data-table__actions">
+          <a class="button button--small button--quiet" href="/guests/<%= guest.id %>">Ver<span class="visually-hidden"> a <%= guest.fullName %></span></a>
+          <% if (can('guests.manage')) { %>
+          <a class="button button--small button--quiet" href="/guests/<%= guest.id %>/edit">Editar<span class="visually-hidden"> a <%= guest.fullName %></span></a>
+          <a class="button button--small button--quiet button--danger-text" href="/guests/<%= guest.id %>/delete">Eliminar<span class="visually-hidden"> a <%= guest.fullName %></span></a>
+          <% } %>
+        </td>
+      </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+<% } else if (!isFiltered && can('guests.manage')) { %>
+<p class="empty-state"><a class="button button--primary" href="/guests/new">Registrar el primer huésped</a></p>
+<% } %>
+
+<%- include('../partials/pagination', { pages, prevHref, nextHref, label: 'Páginas de huéspedes' }) %>

@@ -1,0 +1,12 @@
+<section class="error-page" aria-labelledby="error-title">
+  <p class="error-page__status"><%= status %></p>
+  <h1 class="error-page__title" id="error-title"><%= title %></h1>
+  <p class="error-page__message"><%= message %></p>
+  <a class="button button--primary" href="/">Volver al inicio</a>
+  <% if (stack) { %>
+  <details class="error-page__details">
+    <summary>Detalle técnico (solo visible en desarrollo)</summary>
+    <pre><%= stack %></pre>
+  </details>
+  <% } %>
+</section>

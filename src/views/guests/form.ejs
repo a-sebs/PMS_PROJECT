@@ -1,0 +1,111 @@
+<nav class="breadcrumbs" aria-label="Ruta de navegación">
+  <a href="/guests">Huéspedes</a> <span aria-hidden="true">/</span>
+  <% if (guest) { %>
+  <a href="/guests/<%= guest.id %>"><%= guest.firstName %> <%= guest.lastName %></a> <span aria-hidden="true">/</span>
+  <span aria-current="page">Editar</span>
+  <% } else { %>
+  <span aria-current="page">Nuevo</span>
+  <% } %>
+</nav>
+
+<header class="page-header">
+  <h1 class="page-header__title"><%= guest ? `Editar a ${guest.firstName} ${guest.lastName}` : 'Nuevo huésped' %></h1>
+  <p class="page-header__lead">Todos los campos son obligatorios, salvo las notas.</p>
+</header>
+
+<div class="form-shell">
+<% if (notice && notice.conflict) { %>
+<p class="flash flash--error" role="alert"><%= notice.conflict %></p>
+<% } else { %>
+<%- include('../partials/form-alert', { errors }) %>
+<% } %>
+<% if (notice && notice.duplicateId) { %>
+<p class="flash" role="status">Puedes <a class="text-link" href="/guests/<%= notice.duplicateId %>">ver la ficha del huésped que ya tiene ese documento</a>.</p>
+<% } %>
+
+<form class="form form--panel" method="post" action="<%= guest ? `/guests/${guest.id}` : '/guests' %>" data-validate data-guest-form>
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <% if (guest) { %>
+  <input type="hidden" name="version" value="<%= values.version %>">
+  <% } %>
+
+  <fieldset class="form__group">
+    <legend class="form__legend">Documento de identidad</legend>
+    <div class="form__grid">
+      <%- include('../partials/field', {
+        name: 'documentType', label: 'Tipo de documento', control: 'select', value: values.documentType,
+        options: documentTypes, error: errors.documentType, attrs: { required: true }
+      }) %>
+      <%- include('../partials/field', {
+        name: 'documentNumber', label: 'Número de documento', value: values.documentNumber, error: errors.documentNumber,
+        hint: 'Cédula: 10 dígitos. Pasaporte: de 5 a 20 letras o números.',
+        attrs: { required: true, maxlength: 20, autocomplete: 'off', spellcheck: 'false',
+                 'data-validate-document': 'documentType' }
+      }) %>
+    </div>
+  </fieldset>
+
+  <fieldset class="form__group">
+    <legend class="form__legend">Datos personales</legend>
+    <div class="form__grid">
+      <%- include('../partials/field', {
+        name: 'firstName', label: 'Nombres', value: values.firstName, error: errors.firstName,
+        attrs: { required: true, minlength: 2, maxlength: 60, autocomplete: 'off', pattern: namePattern,
+                 'data-msg-pattern': 'Usa solo letras, espacios, apóstrofos o guiones.',
+                 'data-msg-required': 'Escribe los nombres.' }
+      }) %>
+      <%- include('../partials/field', {
+        name: 'lastName', label: 'Apellidos', value: values.lastName, error: errors.lastName,
+        attrs: { required: true, minlength: 2, maxlength: 60, autocomplete: 'off', pattern: namePattern,
+                 'data-msg-pattern': 'Usa solo letras, espacios, apóstrofos o guiones.',
+                 'data-msg-required': 'Escribe los apellidos.' }
+      }) %>
+      <%- include('../partials/field', {
+        name: 'birthDate', label: 'Fecha de nacimiento', type: 'date', value: values.birthDate, error: errors.birthDate,
+        hint: `El huésped titular debe tener al menos ${minAge} años.`,
+        attrs: { required: true, min: birthDateMin, max: birthDateMax,
+                 'data-msg-max': `El huésped titular debe ser mayor de edad (${minAge} años o más).`,
+                 'data-msg-min': 'Revisa el año de nacimiento.',
+                 'data-msg-required': 'Escribe la fecha de nacimiento.' }
+      }) %>
+      <%- include('../partials/field', {
+        name: 'nationality', label: 'Nacionalidad', control: 'select', value: values.nationality,
+        options: countries, error: errors.nationality, attrs: { required: true }
+      }) %>
+    </div>
+  </fieldset>
+
+  <fieldset class="form__group">
+    <legend class="form__legend">Contacto</legend>
+    <div class="form__grid">
+      <%- include('../partials/field', {
+        name: 'email', label: 'Correo', type: 'email', value: values.email, error: errors.email,
+        attrs: { required: true, maxlength: 254, autocomplete: 'off', inputmode: 'email',
+                 pattern: '[^@\\s]+@[^@\\s]+\\.[^@\\s]+',
+                 'data-msg-pattern': 'Escribe un correo válido, por ejemplo ana@correo.com.',
+                 'data-msg-required': 'Escribe el correo del huésped.' }
+      }) %>
+      <%- include('../partials/field', {
+        name: 'phone', label: 'Teléfono', type: 'tel', value: values.phone, error: errors.phone,
+        hint: 'Celular de Ecuador (0991234567) o internacional con + (+57 300 123 4567).',
+        attrs: { required: true, maxlength: 25, autocomplete: 'off', inputmode: 'tel',
+                 'data-validate-phone': true, 'data-msg-required': 'Escribe el teléfono.' }
+      }) %>
+    </div>
+  </fieldset>
+
+  <fieldset class="form__group">
+    <legend class="form__legend">Notas</legend>
+    <%- include('../partials/field', {
+      name: 'notes', label: 'Preferencias o comentarios', control: 'textarea', value: values.notes,
+      error: errors.notes, optional: true, hint: `Hasta ${notesMax} caracteres. Ej.: alergia a los frutos secos, prefiere piso alto.`,
+      attrs: { maxlength: notesMax, rows: 3, 'data-counter': true }
+    }) %>
+  </fieldset>
+
+  <div class="form__actions">
+    <button class="button button--primary" type="submit"><%= guest ? 'Guardar cambios' : 'Registrar huésped' %></button>
+    <a class="button button--quiet" href="<%= guest ? `/guests/${guest.id}` : '/guests' %>">Cancelar</a>
+  </div>
+</form>
+</div>

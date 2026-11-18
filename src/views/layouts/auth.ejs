@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <%- include('../partials/head') %>
+</head>
+<body class="auth-layout">
+  <main id="main" class="auth-layout__main">
+    <%- include('../partials/flash') %>
+<%- body %>
+  </main>
+  <% for (const src of (locals.scripts || [])) { %>
+  <script type="module" src="<%= src %>"></script>
+  <% } %>
+</body>
+</html>
