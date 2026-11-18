@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: aurora-pms-staging
+    runtime: docker
+    plan: free
+    branch: develop
+    autoDeployTrigger: checksPass
+    healthCheckPath: /health
+    dockerCommand: sh -c 'node scripts/migrate.js && node scripts/seed-staging.js && exec node src/main.js'
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: SEED_PASSWORD
+        generateValue: true
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: PORT
+        value: '3000'
+      - key: TRUST_PROXY
+        value: 'true'
+      - key: APP_TIMEZONE
+        value: America/Guayaquil

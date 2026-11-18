@@ -5,7 +5,7 @@ Todos los cambios relevantes del proyecto. Formato basado en
 
 ## [Sin publicar]
 
-- Preparada la demo en Render Free con PostgreSQL en Neon, migraciones al arranque
+- Preparados staging desde `develop` y la demo estable desde `main` en Render Free, cada uno conectado a su rama de PostgreSQL en el mismo proyecto Neon, migraciones al arranque
   y controles de GitHub Actions para Node 22 y 24 (ADR-0013).
 
 ### Agregado: requisitos obligatorios del primer bimestre (guía del docente)

@@ -5,22 +5,31 @@ import { DEMO_CHAT, DEMO_GUESTS, DEMO_USERS, ROOM_TYPES, ROOMS } from './seed-da
 /** @typedef {import('./database.js').Queryable} Queryable */
 
 /** @param {Queryable} q */
-export async function seedUsers(q, { passwordHash }) {
+export async function seedUsers(q, { passwordHash, onlyMissing = false }) {
   for (const user of DEMO_USERS) {
-    await upsertUser(q, { ...user, passwordHash });
+    if (onlyMissing) {
+      await q.query(
+        `INSERT INTO users (email, full_name, role, password_hash) VALUES ($1, $2, $3, $4)
+         ON CONFLICT (lower(email)) DO NOTHING`,
+        [user.email, user.fullName, user.role, passwordHash],
+      );
+    } else {
+      await upsertUser(q, { ...user, passwordHash });
+    }
   }
 }
 
 /** @param {Queryable} q */
-export async function seedRoomTypes(q) {
+export async function seedRoomTypes(q, { onlyMissing = false } = {}) {
+  const onConflict = onlyMissing
+    ? 'DO NOTHING'
+    : `DO UPDATE SET name = EXCLUDED.name, base_rate_cents = EXCLUDED.base_rate_cents,
+                     max_occupancy = EXCLUDED.max_occupancy`;
   for (const type of ROOM_TYPES) {
     await q.query(
       `INSERT INTO room_types (code, name, base_rate_cents, max_occupancy)
        VALUES ($1, $2, $3, $4)
-       ON CONFLICT (code) DO UPDATE
-         SET name = EXCLUDED.name,
-             base_rate_cents = EXCLUDED.base_rate_cents,
-             max_occupancy = EXCLUDED.max_occupancy`,
+       ON CONFLICT (code) ${onConflict}`,
       [type.code, type.name, type.baseRateCents, type.maxOccupancy],
     );
   }
@@ -100,23 +109,30 @@ export async function seedChat(q) {
 /**
  * Carga todos los datos de demostración en una sola transacción (idempotente).
  * @param {ReturnType<import('./database.js').createDatabase>} db
- * @param {{ password: string, chat?: boolean }} options `chat: false` en las pruebas, para que
+ * @param {{ password: string, chat?: boolean, once?: boolean }} options `chat: false` en las pruebas, para que
  *   los conteos de mensajes sin leer empiecen en cero.
  */
-export async function seedDemoData(db, { password, chat = true }) {
-  // Todos los usuarios de demostración comparten contraseña: basta con un hash.
-  const passwordHash = await hashPassword(password);
-  await db.transaction(async (client) => {
-    await seedUsers(client, { passwordHash });
-    await seedRoomTypes(client);
+export async function seedDemoData(db, { password, chat = true, once = false }) {
+  return db.transaction(async (client) => {
+    if (once) {
+      // La clave única serializa dos arranques y se revierte junto a los datos si falla la carga.
+      const applied = await client.query(
+        `INSERT INTO schema_migrations (version) VALUES ('staging-demo-v1')
+         ON CONFLICT (version) DO NOTHING RETURNING version`,
+      );
+      if (!applied.rowCount) return null;
+    }
+    const passwordHash = await hashPassword(password);
+    await seedUsers(client, { passwordHash, onlyMissing: once });
+    await seedRoomTypes(client, { onlyMissing: once });
     await seedRooms(client);
     await seedGuests(client);
     if (chat) await seedChat(client);
+    return {
+      users: DEMO_USERS.length,
+      roomTypes: ROOM_TYPES.length,
+      rooms: ROOMS.length,
+      guests: DEMO_GUESTS.length,
+    };
   });
-  return {
-    users: DEMO_USERS.length,
-    roomTypes: ROOM_TYPES.length,
-    rooms: ROOMS.length,
-    guests: DEMO_GUESTS.length,
-  };
 }
