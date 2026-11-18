@@ -1,0 +1,8 @@
+<% const messages = consumeFlash(); %>
+<% if (messages.length > 0) { %>
+<div class="flash-stack">
+  <% for (const message of messages) { %>
+  <p class="flash flash--<%= message.type %>" role="<%= message.type === 'error' ? 'alert' : 'status' %>"><%= message.message %></p>
+  <% } %>
+</div>
+<% } %>

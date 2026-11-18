@@ -1,0 +1,26 @@
+<%# Paginación accesible. Recibe: pages ([{ number, href, current } | null]), prevHref, nextHref, label. %>
+<% if (pages.length > 1) { %>
+<nav class="pagination" aria-label="<%= label %>">
+  <% if (prevHref) { %>
+  <a class="pagination__link pagination__link--step" href="<%= prevHref %>" rel="prev">← Anterior</a>
+  <% } else { %>
+  <span class="pagination__link pagination__link--step is-disabled" aria-hidden="true">← Anterior</span>
+  <% } %>
+  <ol class="pagination__pages">
+    <% for (const item of pages) { %>
+      <% if (item === null) { %>
+      <li class="pagination__gap" aria-hidden="true">…</li>
+      <% } else if (item.current) { %>
+      <li><a class="pagination__link is-current" href="<%= item.href %>" aria-current="page"><span class="visually-hidden">Página </span><%= item.number %></a></li>
+      <% } else { %>
+      <li><a class="pagination__link" href="<%= item.href %>"><span class="visually-hidden">Página </span><%= item.number %></a></li>
+      <% } %>
+    <% } %>
+  </ol>
+  <% if (nextHref) { %>
+  <a class="pagination__link pagination__link--step" href="<%= nextHref %>" rel="next">Siguiente →</a>
+  <% } else { %>
+  <span class="pagination__link pagination__link--step is-disabled" aria-hidden="true">Siguiente →</span>
+  <% } %>
+</nav>
+<% } %>

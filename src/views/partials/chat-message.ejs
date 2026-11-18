@@ -1,0 +1,8 @@
+<li class="chat-message<%= message.mine ? ' chat-message--mine' : '' %>" id="mensaje-<%= message.id %>" data-message-id="<%= message.id %>">
+  <p class="chat-message__meta">
+    <span class="chat-message__author"><%= message.mine ? 'Tú' : message.author.name %></span>
+    <span class="chat-message__role"><%= message.author.roleLabel %></span>
+    <time class="chat-message__time" datetime="<%= message.createdAt %>"><%= message.isToday ? formatTime(message.createdAt) : formatDateTime(message.createdAt) %></time>
+  </p>
+  <p class="chat-message__body"><%= message.body %></p>
+</li>

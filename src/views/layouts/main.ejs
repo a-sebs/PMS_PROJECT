@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <%- include('../partials/head') %>
+</head>
+<body data-timezone="<%= timezone %>" data-user-id="<%= currentUser.id %>">
+  <a class="skip-link" href="#main">Saltar al contenido</a>
+
+  <header class="topbar">
+    <a class="brand" href="/dashboard">
+      <svg class="brand__mark" aria-hidden="true"><use href="/img/icons.svg#key"></use></svg>
+      <span class="brand__name"><%= appName %></span>
+    </a>
+
+    <%
+      const section = (prefix) => locals.currentPath === prefix || (locals.currentPath || '').startsWith(`${prefix}/`);
+      const current = (prefix) => section(prefix) ? ' aria-current="page"' : '';
+    %>
+    <nav class="topnav" aria-label="Principal">
+      <a class="topnav__link" href="/dashboard"<%- current('/dashboard') %>>Panel</a>
+      <% if (can('rooms.view')) { %>
+      <a class="topnav__link" href="/rooms"<%- current('/rooms') %>>Habitaciones</a>
+      <% } %>
+      <% if (can('guests.view')) { %>
+      <a class="topnav__link" href="/guests"<%- current('/guests') %>>Huéspedes</a>
+      <% } %>
+      <% if (can('chat.use')) { %>
+      <a class="topnav__link" href="/chat"<%- current('/chat') %>>
+        Chat
+        <% const unread = locals.chatUnread || 0; %>
+        <span class="badge badge--count badge--nav" data-chat-badge data-count="<%= unread %>"<%- unread > 0 ? '' : ' hidden' %>><span data-count-value><%= unread > 99 ? '99+' : unread %></span><span class="visually-hidden"> mensajes sin leer</span></span>
+      </a>
+      <% } %>
+      <% if (can('users.manage')) { %>
+      <a class="topnav__link" href="/users"<%- current('/users') %>>Usuarios</a>
+      <% } %>
+    </nav>
+
+    <%# Oculto hasta que el JavaScript lo active: sin JS no hay conexión en vivo que mostrar. %>
+    <p class="live" data-live-indicator data-state="connecting" role="status" hidden>
+      <span class="live__dot" aria-hidden="true"></span>
+      <span class="live__text">Conectando…</span>
+    </p>
+
+    <div class="usermenu">
+      <p class="usermenu__who">
+        <span class="usermenu__name"><%= currentUser.fullName %></span>
+        <span class="usermenu__role"><%= roleLabel(currentUser.role) %></span>
+      </p>
+      <form method="post" action="/logout">
+        <input type="hidden" name="_csrf" value="<%= locals.csrfToken ?? '' %>">
+        <button class="button button--quiet" type="submit">
+          <svg class="icon" aria-hidden="true"><use href="/img/icons.svg#logout"></use></svg>
+          Salir
+        </button>
+      </form>
+    </div>
+  </header>
+
+  <%- include('../partials/flash') %>
+
+  <main id="main" class="page" tabindex="-1"
+        data-live-channels="<%= (locals.liveChannels || []).join(' ') %>"<%- locals.liveRefresh ? ' data-live-refresh' : '' %><%- locals.liveManual ? ' data-live-manual' : '' %>>
+<%- body %>
+  </main>
+
+  <div class="toasts" data-toasts role="status" aria-live="polite"></div>
+  <div class="visually-hidden" data-announcer aria-live="polite" aria-atomic="true"></div>
+
+  <script src="/socket.io/socket.io.min.js" defer></script>
+  <script type="module" src="/js/app.js"></script>
+  <% for (const src of (locals.scripts || [])) { %>
+  <script type="module" src="<%= src %>"></script>
+  <% } %>
+</body>
+</html>

@@ -1,0 +1,9 @@
+<%# Resumen de errores al inicio de un formulario (se anuncia a lectores de pantalla). %>
+<% const fieldCount = Object.keys(errors || {}).filter((key) => key !== 'form').length; %>
+<% if (errors && errors.form) { %>
+<p class="flash flash--error" role="alert"><%= errors.form %></p>
+<% } else if (fieldCount > 0) { %>
+<p class="flash flash--error" role="alert">
+  <%= fieldCount === 1 ? 'Revisa el campo marcado.' : `Revisa los ${fieldCount} campos marcados.` %>
+</p>
+<% } %>

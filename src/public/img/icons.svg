@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <!-- Sprite de íconos (24×24, trazo). Uso: <svg class="icon"><use href="/img/icons.svg#id"></use></svg> -->
+  <symbol id="key" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="8" cy="8" r="4.5"/>
+    <path d="M11.3 11.3 20 20M15.8 15.8l2.2-2.2M18.2 18.2l2-2"/>
+  </symbol>
+  <symbol id="dirty" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3.5c3 4 6 7.6 6 10.6a6 6 0 0 1-12 0c0-3 3-6.6 6-10.6z"/>
+  </symbol>
+  <symbol id="cleaning" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 4l-7.5 7.5"/>
+    <path d="M10 9.5l4.5 4.5-2.2 5.5c-3-.6-6.3-3.9-7.8-7.8z"/>
+    <path d="M7.5 15.8l-2 2M10 18l-1.5 1.5"/>
+  </symbol>
+  <symbol id="clean" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3c.8 4.2 2.8 6.2 7 7-4.2.8-6.2 2.8-7 7-.8-4.2-2.8-6.2-7-7 4.2-.8 6.2-2.8 7-7z"/>
+    <path d="M19 17v4M17 19h4"/>
+  </symbol>
+  <symbol id="inspected" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="8.5"/>
+    <path d="M8.2 12.3l2.6 2.6 5-5.4"/>
+  </symbol>
+  <symbol id="ooo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="8.5"/>
+    <path d="M6 6l12 12"/>
+  </symbol>
+  <symbol id="occupied" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="8" r="3.5"/>
+    <path d="M5 20c.8-3.8 3.5-6 7-6s6.2 2.2 7 6"/>
+  </symbol>
+  <symbol id="logout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14 4h4.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H14"/>
+    <path d="M10 8l-4 4 4 4M6 12h9"/>
+  </symbol>
+  <symbol id="plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 5v14M5 12h14"/>
+  </symbol>
+  <symbol id="chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 5h16v11H9l-5 4z"/>
+    <path d="M8 9.5h8M8 12.5h5"/>
+  </symbol>
+  <symbol id="guests" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="9" cy="8" r="3.25"/>
+    <path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/>
+    <path d="M15.5 5.2a3 3 0 0 1 0 5.6M17.5 14.4c1.6.7 2.6 2.3 3 4.6"/>
+  </symbol>
+  <symbol id="send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 12l16-7-6 16-3-7z"/>
+    <path d="M11 14l9-9"/>
+  </symbol>
+</svg>

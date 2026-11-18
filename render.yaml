@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: aurora-pms
+    runtime: docker
+    plan: free
+    branch: main
+    autoDeployTrigger: checksPass
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: PORT
+        value: '3000'
+      - key: TRUST_PROXY
+        value: 'true'
+      - key: APP_TIMEZONE
+        value: America/Guayaquil

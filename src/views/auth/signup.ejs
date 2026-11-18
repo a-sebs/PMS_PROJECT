@@ -1,0 +1,50 @@
+<section class="login login--wide" aria-labelledby="signup-title">
+  <div class="login__brand">
+    <svg class="login__mark" aria-hidden="true"><use href="/img/icons.svg#key"></use></svg>
+    <p class="login__name"><%= appName %></p>
+  </div>
+
+  <div class="login__heading">
+    <h1 class="login__title" id="signup-title">Crea tu cuenta del personal</h1>
+    <p class="login__lead">Entrarás con el rol de <strong><%= roleLabel %></strong>. Un administrador puede cambiarlo después.</p>
+  </div>
+
+  <%- include('../partials/form-alert', { errors }) %>
+
+  <form class="form" method="post" action="/signup" data-validate>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+    <%- include('../partials/field', {
+      name: 'fullName', label: 'Nombre y apellido', value: values.fullName, error: errors.fullName,
+      attrs: { required: true, minlength: 5, maxlength: 120, autocomplete: 'name', autofocus: true,
+               pattern: "[\\p{L}][\\p{L}' .\\-]*",
+               'data-msg-pattern': 'Usa solo letras, espacios, apóstrofos o guiones.',
+               'data-validate-words': 2 }
+    }) %>
+
+    <%- include('../partials/field', {
+      name: 'email', label: 'Correo', type: 'email', value: values.email, error: errors.email,
+      hint: 'Lo usarás para iniciar sesión y recuperar tu clave.',
+      attrs: { required: true, maxlength: 254, autocomplete: 'email', inputmode: 'email',
+               pattern: '[^@\\s]+@[^@\\s]+\\.[^@\\s]+',
+               'data-msg-pattern': 'Escribe un correo válido, por ejemplo ana@hotel.com.' }
+    }) %>
+
+    <%- include('../partials/field', {
+      name: 'password', label: 'Contraseña', type: 'password', error: errors.password,
+      hint: `Al menos ${passwordRules.minLength} caracteres, con letras y números.`,
+      attrs: { required: true, minlength: passwordRules.minLength, maxlength: passwordRules.maxLength,
+               autocomplete: 'new-password', 'data-validate-password': true }
+    }) %>
+
+    <%- include('../partials/field', {
+      name: 'passwordConfirm', label: 'Repite la contraseña', type: 'password', error: errors.passwordConfirm,
+      attrs: { required: true, maxlength: passwordRules.maxLength, autocomplete: 'new-password',
+               'data-validate-match': 'password', 'data-msg-required': 'Repite la contraseña.' }
+    }) %>
+
+    <button class="button button--primary button--block" type="submit">Crear cuenta</button>
+  </form>
+
+  <p class="login__alt">¿Ya tienes cuenta? <a class="text-link" href="/login">Inicia sesión</a></p>
+</section>

@@ -1,0 +1,17 @@
+<nav class="breadcrumbs" aria-label="Ruta de navegación">
+  <a href="/guests">Huéspedes</a> <span aria-hidden="true">/</span>
+  <a href="/guests/<%= guest.id %>"><%= guest.fullName %></a> <span aria-hidden="true">/</span>
+  <span aria-current="page">Eliminar</span>
+</nav>
+
+<section class="confirm" aria-labelledby="confirm-title">
+  <h1 class="confirm__title" id="confirm-title">¿Eliminar a <%= guest.fullName %>?</h1>
+  <p class="confirm__text">Se borrarán sus datos de contacto y documento
+    (<%= guest.documentLabel %> <span class="mono"><%= guest.documentNumber %></span>).
+    Esta acción no se puede deshacer y quedará registrada en la bitácora.</p>
+  <form class="confirm__actions" method="post" action="/guests/<%= guest.id %>/delete">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <button class="button button--danger" type="submit">Sí, eliminar huésped</button>
+    <a class="button button--quiet" href="/guests/<%= guest.id %>" autofocus>No, volver a la ficha</a>
+  </form>
+</section>

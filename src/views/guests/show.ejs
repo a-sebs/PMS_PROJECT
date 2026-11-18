@@ -1,0 +1,53 @@
+<nav class="breadcrumbs" aria-label="Ruta de navegación">
+  <a href="/guests">Huéspedes</a> <span aria-hidden="true">/</span> <span aria-current="page"><%= guest.fullName %></span>
+</nav>
+
+<header class="page-header page-header--split">
+  <div>
+    <h1 class="page-header__title"><%= guest.fullName %></h1>
+    <p class="page-header__lead">Huésped N.º <%= guest.id %> · <%= guest.nationalityName %></p>
+  </div>
+  <% if (can('guests.manage')) { %>
+  <div class="page-header__actions">
+    <a class="button button--primary" href="/guests/<%= guest.id %>/edit">Editar</a>
+    <a class="button button--danger-outline" href="/guests/<%= guest.id %>/delete">Eliminar</a>
+  </div>
+  <% } %>
+</header>
+
+<dl class="details">
+  <div class="details__item">
+    <dt>Documento</dt>
+    <dd><%= guest.documentLabel %> <span class="mono"><%= guest.documentNumber %></span></dd>
+  </div>
+  <div class="details__item">
+    <dt>Correo</dt>
+    <dd><a class="text-link" href="mailto:<%= guest.email %>"><%= guest.email %></a></dd>
+  </div>
+  <div class="details__item">
+    <dt>Teléfono</dt>
+    <dd><a class="text-link mono" href="tel:<%= guest.phone %>"><%= guest.phoneDisplay %></a></dd>
+  </div>
+  <div class="details__item">
+    <dt>Fecha de nacimiento</dt>
+    <dd><%= formatDate(guest.birthDate) %> <span class="details__muted">(<%= guest.age %> años)</span></dd>
+  </div>
+  <div class="details__item">
+    <dt>Nacionalidad</dt>
+    <dd><%= guest.nationalityName %></dd>
+  </div>
+  <div class="details__item details__item--wide">
+    <dt>Notas y preferencias</dt>
+    <dd><%= guest.notes || 'Sin notas.' %></dd>
+  </div>
+  <div class="details__item">
+    <dt>Registrado</dt>
+    <dd><%= formatDateTime(guest.createdAt) %><%= guest.createdByName ? ` por ${guest.createdByName}` : '' %></dd>
+  </div>
+  <div class="details__item">
+    <dt>Última actualización</dt>
+    <dd><%= formatDateTime(guest.updatedAt) %> <span class="details__muted">(versión <%= guest.version %>)</span></dd>
+  </div>
+</dl>
+
+<p><a class="text-link" href="/guests">← Volver al listado</a></p>

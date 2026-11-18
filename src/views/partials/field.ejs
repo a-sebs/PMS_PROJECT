@@ -1,0 +1,30 @@
+<%#
+  Campo de formulario accesible con su mensaje de error (del servidor o del navegador).
+  Parámetros: name, label, value, error, hint, type, control ('input' | 'textarea' | 'select'),
+  options ([{ value, label }] para select), attrs (atributos de validación HTML), optional, id.
+%>
+<%
+  const fieldId = locals.id || name;
+  const control = locals.control || 'input';
+  const fieldError = locals.error || '';
+  const fieldValue = locals.value ?? '';
+  const describedBy = [locals.hint ? `${fieldId}-hint` : null, `${fieldId}-error`].filter(Boolean).join(' ');
+%>
+<div class="field<%= fieldError ? ' field--invalid' : '' %><%= locals.wide ? ' field--wide' : '' %>">
+  <label class="field__label" for="<%= fieldId %>"><%= label %><% if (locals.optional) { %> <span class="field__optional">(opcional)</span><% } %></label>
+  <% if (locals.hint) { %>
+  <p class="field__hint" id="<%= fieldId %>-hint"><%= hint %></p>
+  <% } %>
+  <% if (control === 'textarea') { %>
+  <textarea class="field__input field__input--area" id="<%= fieldId %>" name="<%= name %>" aria-describedby="<%= describedBy %>"<%- fieldError ? ' aria-invalid="true"' : '' %> <%- htmlAttrs(locals.attrs) %>><%= fieldValue %></textarea>
+  <% } else if (control === 'select') { %>
+  <select class="field__input" id="<%= fieldId %>" name="<%= name %>" aria-describedby="<%= describedBy %>"<%- fieldError ? ' aria-invalid="true"' : '' %> <%- htmlAttrs(locals.attrs) %>>
+    <% for (const option of (locals.options || [])) { %>
+    <option value="<%= option.value %>"<%- String(option.value) === String(fieldValue) ? ' selected' : '' %>><%= option.label %></option>
+    <% } %>
+  </select>
+  <% } else { %>
+  <input class="field__input" id="<%= fieldId %>" name="<%= name %>" type="<%= locals.type || 'text' %>" value="<%= fieldValue %>" aria-describedby="<%= describedBy %>"<%- fieldError ? ' aria-invalid="true"' : '' %> <%- htmlAttrs(locals.attrs) %>>
+  <% } %>
+  <p class="field__error" id="<%= fieldId %>-error" data-field-error<%- fieldError ? '' : ' hidden' %>><%= fieldError %></p>
+</div>

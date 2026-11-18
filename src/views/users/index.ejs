@@ -1,0 +1,56 @@
+<header class="page-header">
+  <h1 class="page-header__title">Usuarios del personal</h1>
+  <p class="page-header__lead">Quien crea su cuenta entra como Recepción. Aquí puedes cambiar su rol o
+    desactivar la cuenta; los cambios se aplican al instante en sus pestañas abiertas.</p>
+</header>
+
+<div class="table-wrap">
+  <table class="data-table">
+    <caption class="visually-hidden">Cuentas del personal, su rol y su estado</caption>
+    <thead>
+      <tr>
+        <th scope="col">Persona</th>
+        <th scope="col">Rol y estado</th>
+        <th scope="col">Último acceso</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for (const user of users) { %>
+      <tr class="<%= user.isActive ? '' : 'is-muted' %>">
+        <th scope="row">
+          <span class="data-table__primary"><%= user.fullName %></span>
+          <span class="data-table__secondary"><%= user.email %></span>
+        </th>
+        <td>
+          <% if (user.id === currentUser.id) { %>
+          <span class="badge"><%= roleLabel(user.role) %></span>
+          <span class="data-table__secondary">Tu cuenta: no puedes cambiar tu propio rol.</span>
+          <% } else { %>
+          <form class="inline-form" method="post" action="/users/<%= user.id %>">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <label class="visually-hidden" for="role-<%= user.id %>">Rol de <%= user.fullName %></label>
+            <select class="field__input field__input--compact" id="role-<%= user.id %>" name="role">
+              <% for (const role of roles) { %>
+              <option value="<%= role.value %>"<%- role.value === user.role ? ' selected' : '' %>><%= role.label %></option>
+              <% } %>
+            </select>
+            <label class="checkbox">
+              <input type="checkbox" name="isActive"<%- user.isActive ? ' checked' : '' %>>
+              Activa
+            </label>
+            <button class="button button--small" type="submit">Guardar<span class="visually-hidden"> cambios de <%= user.fullName %></span></button>
+          </form>
+          <% } %>
+        </td>
+        <td>
+          <% if (user.lastLoginAt) { %>
+          <time datetime="<%= user.lastLoginAt %>"><%= formatDateTime(user.lastLoginAt) %></time>
+          <% } else { %>
+          <span class="data-table__secondary">Nunca</span>
+          <% } %>
+        </td>
+      </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>

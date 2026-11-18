@@ -1,0 +1,15 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="csrf-token" content="<%= locals.csrfToken ?? '' %>">
+<title><%= locals.title ? `${title} | Aurora PMS` : 'Aurora PMS' %></title>
+<link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+<%# Precarga de las fuentes de la primera pantalla: evita que el texto "salte" al cambiar de
+    fuente (CLS en Lighthouse). crossorigin es obligatorio para precargar fuentes. %>
+<link rel="preload" href="/vendor/atkinson-hyperlegible-next/files/atkinson-hyperlegible-next-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/vendor/atkinson-hyperlegible-next/files/atkinson-hyperlegible-next-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/vendor/big-shoulders/files/big-shoulders-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/vendor/atkinson-hyperlegible-next/latin-400.css">
+<link rel="stylesheet" href="/vendor/atkinson-hyperlegible-next/latin-700.css">
+<link rel="stylesheet" href="/vendor/big-shoulders/latin-800.css">
+<link rel="stylesheet" href="/css/app.css">

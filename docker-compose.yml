@@ -1,0 +1,41 @@
+# Entorno local.
+#   Solo la base de datos (desarrollo diario):  docker compose up -d db
+#   App + base de datos (como en producción):   docker compose --profile full up --build
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: pms
+      POSTGRES_PASSWORD: pms
+      POSTGRES_DB: pms_dev
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # Crea también la base de datos de pruebas (pms_test) la primera vez.
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U pms -d pms_dev']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    profiles: ['full']
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgres://pms:pms@db:5432/pms_dev
+      SESSION_SECRET: ${SESSION_SECRET:?Define SESSION_SECRET en tu archivo .env}
+      APP_TIMEZONE: ${APP_TIMEZONE:-America/Guayaquil}
+      APP_URL: ${APP_URL:-http://localhost:3000}
+      TRUST_PROXY: 'false'
+    ports:
+      - '3000:3000'
+
+volumes:
+  pgdata:
