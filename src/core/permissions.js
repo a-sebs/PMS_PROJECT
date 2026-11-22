@@ -32,7 +32,10 @@ export const PERMISSIONS = Object.freeze({
   'chat.use': ALL_STAFF,
 });
 
-/** Rol que recibe quien crea su propia cuenta (HU-39). Un administrador puede cambiarlo. */
+/**
+ * Rol que recibe quien crea su propia cuenta (HU-39). La cuenta nace inactiva: un administrador
+ * la activa (y puede cambiar el rol) en /users.
+ */
 export const SIGNUP_ROLE = 'front_desk';
 
 /**

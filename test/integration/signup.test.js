@@ -25,9 +25,10 @@ describe('HU-39 · registro de usuarios (SignUp)', () => {
     assert.match(page.text, /name="fullName"[^>]*required/);
     assert.match(page.text, /name="password"[^>]*minlength="10"/);
     assert.match(page.text, /rol de <strong>Recepción<\/strong>/);
+    assert.match(page.text, /cuando administración apruebe tu cuenta/);
   });
 
-  it('crea la cuenta como Recepción, inicia la sesión y deja rastro en la bitácora', async () => {
+  it('crea la cuenta como Recepción INACTIVA, sin sesión, y deja rastro en la bitácora', async () => {
     const { agent, csrf } = await signupPage(ctx.app);
     const response = await agent.post('/signup').type('form').send({
       _csrf: csrf,
@@ -37,26 +38,69 @@ describe('HU-39 · registro de usuarios (SignUp)', () => {
       passwordConfirm: NEW_PASSWORD,
     });
     assert.equal(response.status, 303);
-    assert.equal(response.headers.location, '/dashboard');
+    assert.equal(response.headers.location, '/login');
 
-    const dashboard = await agent.get('/dashboard');
-    assert.match(dashboard.text, /Te damos la bienvenida, Ana/);
-    assert.equal((await agent.get('/guests')).status, 200, 'recepción accede al CRUD');
-    assert.equal((await agent.get('/chat/general')).status, 200, 'y al chat');
+    const login = await agent.get('/login');
+    assert.match(login.text, /Gracias, Ana\. Tu cuenta de Recepción quedó pendiente/);
+    const guests = await agent.get('/guests');
+    assert.equal(guests.status, 303, 'sin aprobación no hay sesión ni acceso a huéspedes');
+    assert.equal(guests.headers.location, '/login');
 
     const { rows } = await ctx.db.query(
-      `SELECT full_name, email, role, password_hash FROM users WHERE email = 'ana.torres@aurora.test'`,
+      `SELECT full_name, email, role, is_active, password_hash FROM users WHERE email = 'ana.torres@aurora.test'`,
     );
     assert.equal(rows.length, 1);
     assert.equal(rows[0].full_name, 'Ana Torres');
     assert.equal(rows[0].role, 'front_desk');
+    assert.equal(rows[0].is_active, false, 'la cuenta nace pendiente de aprobación');
     assert.match(rows[0].password_hash, /^scrypt\$/);
     assert.ok(!rows[0].password_hash.includes(NEW_PASSWORD), 'nunca en texto plano');
 
     const audit = await ctx.db.query(
       `SELECT summary FROM audit_events WHERE action = 'user.registered' ORDER BY id DESC LIMIT 1`,
     );
-    assert.match(audit.rows[0].summary, /Ana Torres creó su cuenta \(Recepción\)/);
+    assert.match(
+      audit.rows[0].summary,
+      /Ana Torres creó su cuenta \(Recepción, pendiente de aprobación\)/,
+    );
+  });
+
+  it('una cuenta pendiente no puede iniciar sesión hasta que administración la activa', async () => {
+    const email = 'marta.vera@aurora.test';
+    const { agent, csrf } = await signupPage(ctx.app);
+    await agent.post('/signup').type('form').send({
+      _csrf: csrf,
+      fullName: 'Marta Vera',
+      email,
+      password: NEW_PASSWORD,
+      passwordConfirm: NEW_PASSWORD,
+    });
+
+    const tryLogin = async () => {
+      const visitor = request.agent(ctx.app);
+      const page = await visitor.get('/login');
+      const response = await visitor
+        .post('/login')
+        .type('form')
+        .send({ _csrf: csrfFrom(page.text), email, password: NEW_PASSWORD });
+      return { visitor, response };
+    };
+
+    const pending = await tryLogin();
+    assert.equal(pending.response.status, 401);
+    assert.match(pending.response.text, /Correo o contraseña incorrectos/);
+
+    const admin = await loginAs(ctx.app, USERS.admin);
+    const { rows } = await ctx.db.query('SELECT id FROM users WHERE email = $1', [email]);
+    const activation = await admin.agent
+      .post(`/users/${rows[0].id}`)
+      .type('form')
+      .send({ _csrf: admin.csrf, role: 'front_desk', isActive: 'on' });
+    assert.equal(activation.status, 303);
+
+    const approved = await tryLogin();
+    assert.equal(approved.response.status, 303);
+    assert.equal((await approved.visitor.get('/guests')).status, 200, 'ya accede al CRUD');
   });
 
   it('rechaza un correo ya registrado sin importar mayúsculas (409)', async () => {

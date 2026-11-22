@@ -14,8 +14,8 @@ resuelven en el servidor, y el WebSocket vive en el mismo proyecto.
 
 ## Qué hace hoy
 
-- **Registro e inicio de sesión**: cualquier persona del hotel puede crear su cuenta (entra como
-  Recepción y administración recibe un aviso en vivo). Contraseñas con `scrypt` y sal.
+- **Registro e inicio de sesión**: cualquier persona del hotel puede crear su cuenta (queda
+  inactiva, con rol Recepción, hasta que administración la aprueba tras un aviso en vivo). Contraseñas con `scrypt` y sal.
 - **Recuperación de clave** con un enlace de un solo uso que caduca en 30 minutos. El correo es
   simulado: en desarrollo se lee en la **bandeja de pruebas** <http://localhost:3000/dev/correos>.
 - **Huéspedes (CRUD)**: listado paginado con búsqueda por nombre, documento o correo (sin importar

@@ -241,7 +241,7 @@ describe('HU-42 · chat del personal en tiempo real (Socket.IO)', () => {
     });
     assert.equal(response.status, 303);
     const { message } = await notified;
-    assert.match(message, /Rosa Quishpe creó una cuenta de Recepción/);
+    assert.match(message, /Rosa Quishpe creó una cuenta de Recepción y espera aprobación/);
   });
 
   it('cambiar el rol de alguien recarga sus pestañas abiertas', async () => {

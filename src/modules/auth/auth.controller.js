@@ -137,14 +137,15 @@ export function createAuthController({ authService, realtime, demoUsers, showMai
         return renderSignup(res, { status: 409, values, errors: { email: err.message } });
       }
 
-      await startSession(req, user);
+      // La cuenta queda pendiente de aprobación: no se inicia sesión hasta que administración la
+      // active en /users.
       req.flash(
         'success',
-        `Te damos la bienvenida, ${user.fullName.split(' ')[0]}. Tu cuenta de ${ROLE_LABELS[user.role]} está lista.`,
+        `Gracias, ${user.fullName.split(' ')[0]}. Tu cuenta de ${ROLE_LABELS[user.role]} quedó pendiente: podrás iniciar sesión cuando administración la active.`,
       );
       await sessionOps.save(req);
-      req.log?.info({ userId: user.id }, 'registro de usuario');
-      res.redirect(303, '/dashboard');
+      req.log?.info({ userId: user.id }, 'registro de usuario (pendiente de aprobación)');
+      res.redirect(303, '/login');
     },
 
     signupLimited(req, res) {

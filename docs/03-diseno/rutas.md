@@ -24,7 +24,7 @@ Convenciones:
 | POST | `/rooms/:id/housekeeping` | `rooms.view` + rol permitido por la transición | Acción | Cambia el estado de limpieza (`status`, `version`) |
 | POST | `/rooms/:id/out-of-order` | `rooms.out_of_order` | Acción | Bloquea (`action=block`, `reason`) o libera (`action=release`); requiere `version` |
 | GET | `/signup` | Público | Página | Formulario de registro (HU-39) |
-| POST | `/signup` | Público (10 cuentas por hora por IP) | Redirección o página con errores (422/409) | Crea la cuenta con rol Recepción e inicia la sesión |
+| POST | `/signup` | Público (10 cuentas por hora por IP) | Redirección o página con errores (422/409) | Crea la cuenta inactiva con rol Recepción (pendiente de aprobación) y redirige al login |
 | GET | `/forgot-password` | Público | Página | Pedir el enlace de recuperación (HU-40) |
 | POST | `/forgot-password` | Público (10 / 15 min por IP) | Página | Misma respuesta exista o no la cuenta; "envía" el correo simulado |
 | GET | `/reset-password/:token` | Público | Página (410 si el enlace no sirve) | Formulario de nueva clave |

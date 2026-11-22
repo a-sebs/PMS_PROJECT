@@ -56,9 +56,10 @@ las contraseñas existentes.
 ### Registro (HU-39)
 
 - Validación en el servidor de todos los campos (la del navegador solo orienta).
-- La cuenta nueva recibe el rol con menos privilegios que permite trabajar (Recepción); nadie puede
-  elegir su rol al registrarse. Administración recibe un aviso en vivo y puede cambiarlo o
-  desactivar la cuenta.
+- La cuenta nueva recibe el rol Recepción, pero nace **inactiva**: no puede iniciar sesión hasta que
+  administración la active en `/users`. Sin esta aprobación, cualquier persona de internet podría
+  registrarse y ver datos personales de huéspedes. Nadie puede elegir su rol al registrarse.
+  Administración recibe un aviso en vivo y puede activar la cuenta, cambiar su rol o rechazarla.
 - Límite de 10 cuentas creadas por hora desde una misma IP.
 - *Riesgo aceptado:* el registro dice "ya existe una cuenta con este correo" (enumeración de
   cuentas). Es la práctica habitual en un registro y se mitiga con el límite de frecuencia; el

@@ -69,7 +69,7 @@ En CI (`.github/workflows/ci.yml`) corren con Node 22 y 24 contra un servicio de
 | RN-10 ocupada no se bloquea | `rooms.test.js` › *RN-10: no se puede bloquear…* y *RN-10 también lo garantiza la base de datos* |
 | RNF-03 concurrencia | `rooms.test.js` › *dos peticiones simultáneas con la misma versión → exactamente una gana* |
 | RNF-04 seguridad | `auth.test.js` › CSP, fijación de sesión, CSRF; `realtime.test.js` › origen cruzado |
-| HU-39 registro | `signup.test.js` › crea la cuenta como Recepción, correo repetido (409), validación (422), CSRF; `chat.test.js` › aviso en vivo a administración |
+| HU-39 registro | `signup.test.js` › crea la cuenta como Recepción inactiva, no entra hasta que administración la activa, correo repetido (409), validación (422), CSRF; `chat.test.js` › aviso en vivo a administración |
 | HU-40 recuperación de clave | `password-reset.test.js` › misma respuesta exista o no la cuenta, solo hash del token, un solo uso, caducidad, anula enlaces anteriores, cierra sesiones |
 | HU-41 CRUD de huéspedes | `guests.test.js` › paginación, búsqueda sin tildes, filtro, inyección SQL, consulta por id, alta/edición/baja, 422/409, permisos, XSS en notas |
 | HU-41 validaciones | `validators.test.js`, `guest-schema.test.js` › cédula, pasaporte, teléfono, edad, longitudes |

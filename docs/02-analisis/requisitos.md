@@ -66,7 +66,8 @@ flowchart LR
 | Chat: salas Limpieza / Mantenimiento | ✅ / ✅ | ✅ / ✅ | ✅ / — | — / ✅ |
 | Gestionar usuarios e inventario | ✅ | — | — | — |
 
-Quien crea su propia cuenta (HU-39) entra como **front_desk** (Recepción).
+Quien crea su propia cuenta (HU-39) recibe el rol **front_desk** (Recepción), pero la cuenta queda
+**inactiva** hasta que administración la aprueba.
 
 El detalle de cada transición está en [máquinas de estado](../03-diseno/maquinas-de-estado.md).
 
@@ -119,14 +120,15 @@ sistema sin esperar a que alguien me la cree**.
 
 1. Dado el formulario de registro, cuando envío nombre y apellido, correo y una contraseña válida
    (10+ caracteres, letras y números) con su confirmación, entonces se crea mi cuenta con el rol
-   **Recepción** y entro directamente a la pantalla principal.
+   **Recepción**, **pendiente de aprobación**: no puedo iniciar sesión (ni ver datos de huéspedes)
+   hasta que administración la active.
 2. Dado un dato inválido, cuando envío el formulario, entonces veo un mensaje claro junto a cada
    campo con problemas (primero en el navegador y, si este se salta, también desde el servidor) y
    se conservan los datos que escribí, salvo la contraseña.
 3. Dado un correo que ya tiene cuenta (sin importar mayúsculas), cuando me registro, entonces se me
    avisa y no se crea otra.
-4. Dada una cuenta nueva, entonces administración recibe un aviso en tiempo real y queda registrado
-   en la bitácora.
+4. Dada una cuenta nueva, entonces administración recibe un aviso en tiempo real para aprobarla y
+   queda registrado en la bitácora.
 5. Dadas más de 10 cuentas creadas en una hora desde la misma conexión, entonces se rechazan las
    siguientes.
 

@@ -10,8 +10,8 @@ Todos los cambios relevantes del proyecto. Formato basado en
 
 ### Agregado: requisitos obligatorios del primer bimestre (guía del docente)
 
-- Registro de usuarios (HU-39) con validación en el navegador y en el servidor; la cuenta entra
-  como Recepción y administración recibe un aviso en tiempo real.
+- Registro de usuarios (HU-39) con validación en el navegador y en el servidor; la cuenta nace
+  inactiva con rol Recepción y administración recibe un aviso en tiempo real para aprobarla.
 - Recuperación de clave (HU-40) con token de un solo uso (solo se guarda su SHA-256), caducidad de
   30 minutos, cierre de las sesiones abiertas y correo simulado con bandeja de pruebas en
   `/dev/correos` (solo en desarrollo).
