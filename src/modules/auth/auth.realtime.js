@@ -7,12 +7,12 @@ import { ROLE_LABELS } from '#src/core/permissions.js';
  *           realtime: import('#src/realtime/gateway.js').RealtimeGateway }} deps
  */
 export function registerAuthRealtime({ events, realtime }) {
-  // HU-39 · Aviso en vivo a los administradores: alguien nuevo tiene acceso a datos de huéspedes.
+  // HU-39 · Aviso en vivo a los administradores: hay una cuenta nueva esperando su aprobación.
   events.subscribe('user.registered', ({ payload }) => {
     const { user } = payload;
     realtime.toRoles(['admin'], 'notify', {
       tone: 'info',
-      message: `${user.fullName} creó una cuenta de ${ROLE_LABELS[user.role]}. Puedes cambiar su rol en Usuarios.`,
+      message: `${user.fullName} creó una cuenta de ${ROLE_LABELS[user.role]} y espera aprobación. Actívala en Usuarios.`,
       href: '/users',
     });
   });

@@ -101,15 +101,16 @@ export async function upsertUser(q, { email, fullName, role, passwordHash }) {
  * Crea un usuario. Si el correo ya existe, PostgreSQL lanza el error 23505 (unique_violation)
  * por el índice users_email_lower_key: el servicio lo traduce a un mensaje claro.
  * @param {Queryable} q
- * @param {{ email: string, fullName: string, role: string, passwordHash: string }} user
+ * @param {{ email: string, fullName: string, role: string, passwordHash: string,
+ *           isActive?: boolean }} user
  * @returns {Promise<User>}
  */
-export async function insertUser(q, { email, fullName, role, passwordHash }) {
+export async function insertUser(q, { email, fullName, role, passwordHash, isActive = true }) {
   const { rows } = await q.query(
-    `INSERT INTO users (email, full_name, role, password_hash)
-     VALUES (lower($1), $2, $3, $4)
+    `INSERT INTO users (email, full_name, role, password_hash, is_active)
+     VALUES (lower($1), $2, $3, $4, $5)
      RETURNING id, email, full_name, role, is_active`,
-    [email, fullName, role, passwordHash],
+    [email, fullName, role, passwordHash, isActive],
   );
   return toUser(rows[0]);
 }

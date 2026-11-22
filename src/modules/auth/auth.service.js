@@ -65,8 +65,9 @@ export function createAuthService({ db, events, auditService, mailService, appUr
     },
 
     /**
-     * HU-39 · Crea una cuenta con el rol de recepción. Los datos ya vienen validados por el
-     * esquema; aquí se aplican las reglas que dependen de la base de datos.
+     * HU-39 · Crea una cuenta con el rol de recepción, INACTIVA hasta que administración la
+     * apruebe: así nadie ajeno al hotel ve datos de huéspedes solo por registrarse. Los datos ya
+     * vienen validados por el esquema; aquí se aplican las reglas que dependen de la base de datos.
      * @param {{ fullName: string, email: string, password: string }} input
      * @throws {ConflictError} EMAIL_TAKEN si el correo ya tiene cuenta.
      */
@@ -86,13 +87,14 @@ export function createAuthService({ db, events, auditService, mailService, appUr
             fullName,
             role: SIGNUP_ROLE,
             passwordHash,
+            isActive: false,
           });
           const item = await auditService?.record(client, {
             actorId: user.id,
             action: 'user.registered',
             entityType: 'user',
             entityId: user.id,
-            summary: `${user.fullName} creó su cuenta (${ROLE_LABELS[user.role]})`,
+            summary: `${user.fullName} creó su cuenta (${ROLE_LABELS[user.role]}, pendiente de aprobación)`,
             data: { role: user.role },
           });
           return { user, item };
