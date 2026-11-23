@@ -110,6 +110,31 @@ describe('HU-41 · CRUD de huéspedes', () => {
       assert.equal((await frontDesk.agent.get('/guests/999999')).status, 404);
       assert.equal((await frontDesk.agent.get('/guests/abc')).status, 404);
     });
+
+    it('sanea búsquedas con múltiples espacios redundantes y busca con éxito', async () => {
+      const target = DEMO_GUESTS[0];
+      const spaced = `   ${target.firstName}   `;
+      const response = await frontDesk.agent.get(`/guests?q=${encodeURIComponent(spaced)}`);
+      assert.equal(response.status, 200);
+      assert.match(response.text, new RegExp(target.firstName));
+    });
+
+    it('rechaza identificadores inválidos en lookup (letras o negativos) con mensaje claro', async () => {
+      for (const invalid of ['-5', '0', 'invalido']) {
+        const response = await frontDesk.agent.get(`/guests/lookup?id=${encodeURIComponent(invalid)}`);
+        assert.equal(response.status, 303);
+        assert.equal(response.headers.location, '/guests');
+      }
+      const list = await frontDesk.agent.get('/guests');
+      assert.match(list.text, /Escribe un número de identificador válido/);
+    });
+
+    it('muestra el badge de nacionalidad correspondiente (Nacional vs Internacional) en el listado', async () => {
+      const response = await frontDesk.agent.get('/guests');
+      assert.equal(response.status, 200);
+      assert.match(response.text, /<span class="badge">Nacional<\/span>/);
+      assert.match(response.text, /<span class="badge">Internacional<\/span>/);
+    });
   });
 
   describe('crear', () => {
