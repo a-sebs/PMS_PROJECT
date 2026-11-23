@@ -14,9 +14,12 @@
 <section class="toolbar" aria-label="Buscar y filtrar huéspedes">
   <form class="toolbar__search" method="get" action="/guests" role="search">
     <div class="field field--grow">
-      <label class="field__label" for="q">Buscar por nombre, documento o correo</label>
+      <label class="field__label" for="q">
+        Buscar por nombre, documento o correo
+        <kbd class="shortcut-key" title="Atajo de teclado: Alt + S o tecla '/'">Alt+S /</kbd>
+      </label>
       <input class="field__input" id="q" name="q" type="search" value="<%= filters.q ?? '' %>"
-             maxlength="100" placeholder="Ej.: Salazar, 1710034065, ana@correo.com" autocomplete="off">
+             maxlength="100" placeholder="Ej.: Salazar, 1710034065, ana@correo.com (Presiona '/' para buscar)" accesskey="s" autocomplete="off">
     </div>
     <div class="field">
       <label class="field__label" for="nationality">Nacionalidad</label>

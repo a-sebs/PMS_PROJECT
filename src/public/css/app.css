@@ -1174,6 +1174,18 @@ code {
   color: #18233a;
 }
 
+.shortcut-key {
+  display: inline-block;
+  padding: 0.1rem 0.35rem;
+  font-family: var(--font-mono, monospace);
+  font-size: var(--text-xs, 0.75rem);
+  background: var(--surface-sunken);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-s);
+  color: var(--text-muted);
+  vertical-align: middle;
+}
+
 .empty-state {
   padding: var(--space-6) var(--space-5);
   border: 1px dashed var(--line);

@@ -303,3 +303,18 @@ function createLiveConnection() {
 }
 
 export const live = createLiveConnection();
+
+// Atajo accesible: presionar '/' en cualquier vista enfoca la barra de búsqueda si existe
+window.addEventListener('keydown', (event) => {
+  if (
+    event.key === '/' &&
+    !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)
+  ) {
+    const searchInput = document.getElementById('q');
+    if (searchInput) {
+      event.preventDefault();
+      searchInput.focus();
+      searchInput.select();
+    }
+  }
+});
