@@ -34,7 +34,10 @@
   </div>
   <div class="details__item">
     <dt>Nacionalidad</dt>
-    <dd><%= guest.nationalityName %></dd>
+    <dd>
+      <%= guest.nationalityName %>
+      <span class="badge"><%= guest.nationality === 'EC' ? 'Nacional' : 'Internacional' %></span>
+    </dd>
   </div>
   <div class="details__item details__item--wide">
     <dt>Notas y preferencias</dt>

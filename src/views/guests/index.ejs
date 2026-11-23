@@ -82,7 +82,10 @@
           <span class="data-table__secondary">N.º <%= guest.id %> · <%= guest.email %></span>
         </th>
         <td data-label="Documento"><span class="data-table__secondary"><%= guest.documentLabel %></span> <span class="mono"><%= guest.documentNumber %></span></td>
-        <td data-label="Nacionalidad"><%= guest.nationalityName %></td>
+        <td data-label="Nacionalidad">
+          <%= guest.nationalityName %>
+          <span class="badge"><%= guest.nationality === 'EC' ? 'Nacional' : 'Internacional' %></span>
+        </td>
         <td data-label="Teléfono"><span class="mono"><%= guest.phoneDisplay %></span></td>
         <td class="data-table__actions">
           <a class="button button--small button--quiet" href="/guests/<%= guest.id %>">Ver<span class="visually-hidden"> a <%= guest.fullName %></span></a>
