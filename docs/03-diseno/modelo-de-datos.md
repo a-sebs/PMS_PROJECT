@@ -275,3 +275,21 @@ la base de datos (la última defensa).
 Las funciones compartidas están en `src/public/js/lib/validators.js` (las importa el navegador y el
 servidor) y sus pruebas en `test/unit/validators.test.js`.
 
+### 6.1 Control de Concurrencia Optimista (OCC) en Huéspedes
+
+Para prevenir condiciones de carrera (Race Conditions) y sobreescrituras accidentales cuando múltiples
+recepcionistas editan la misma ficha simultáneamente, el módulo aplica control de concurrencia optimista:
+
+1. **Lectura y Fijación de Versión:** Al abrir el formulario de edición (`GET /guests/:id/edit`), el servidor incluye el valor actual de `guest.version` en un campo oculto `<input type="hidden" name="version">`.
+2. **Actualización Condicional Atómica:** El comando SQL verifica coincidencia exacta:
+   ```sql
+   UPDATE guests
+      SET document_type = $3, ..., version = version + 1, updated_at = now()
+    WHERE id = $1 AND version = $2
+   RETURNING version;
+   ```
+3. **Detección de Conflicto:** Si otra sesión modificó el registro antes, el `UPDATE` afecta 0 filas (`rowCount === 0`).
+4. **Respuesta HTTP 409 Conflict:** El servicio detecta el desajuste, consulta el estado actual de la base de datos y lanza `ConflictError(code: 'VERSION_CONFLICT')`.
+5. **Experiencia de Usuario sin Pérdida de Datos:** La interfaz web renderiza nuevamente el formulario mostrando los datos actuales de la base de datos junto con una advertencia visual destacada, permitiendo al operador reconciliar las diferencias sin perder su trabajo.
+
+

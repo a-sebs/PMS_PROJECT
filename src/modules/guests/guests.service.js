@@ -100,10 +100,18 @@ export function createGuestsService({ db, events, auditService }) {
     },
 
     /**
-     * @param {number} id
-     * @param {number} expectedVersion Versión que tenía el formulario al abrirse.
-     * @param {Parameters<typeof repository.insert>[1]} input
-     * @param {{ id: number, fullName: string }} actor
+     * Actualiza los datos de un huésped aplicando control de concurrencia optimista (OCC).
+     * Si la versión esperada no coincide con la versión persistida en la base de datos,
+     * se cancela la transacción y se arroja un ConflictError (HTTP 409) conteniendo los
+     * datos más recientes para que el usuario pueda reconciliar cambios sin sobreescritura accidental.
+     *
+     * @param {number} id Identificador único del huésped.
+     * @param {number} expectedVersion Versión que tenía el formulario al abrirse en el cliente.
+     * @param {Parameters<typeof repository.insert>[1]} input Datos del huésped normalizados y validados por Zod.
+     * @param {{ id: number, fullName: string }} actor Usuario autenticado que realiza la modificación.
+     * @throws {NotFoundError} Si el ID del huésped no existe o fue eliminado previamente.
+     * @throws {ConflictError} Si ocurre una colisión de versiones (VERSION_CONFLICT) o duplicado de documento.
+     * @returns {Promise<import('./guests.repository.js').Guest>} Huésped actualizado con su nueva versión incrementada.
      */
     async update(id, expectedVersion, input, actor) {
       let item;
