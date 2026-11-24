@@ -14,6 +14,8 @@
 git clone https://github.com/a-sebs/PMS_PROJECT.git
 cd PMS_PROJECT
 
+nvm use                  # Selecciona la versión definida en .nvmrc (si tienes nvm instalado)
+
 cp .env.example .env          # en PowerShell: Copy-Item .env.example .env
 # Genera un secreto y pégalo en SESSION_SECRET dentro de .env:
 node -e "console.log(require('node:crypto').randomBytes(32).toString('base64url'))"
