@@ -16,6 +16,20 @@
   --brass: #8a6a35;
   --brass-light: #d8c39c;
 
+  /* Superficie de navegación: no cambia con el tema (la barra siempre es azul noche).
+     Cualquier color de la barra debe salir de estos tokens, no de un hex suelto. */
+  --navy: #18233a;
+  --navy-ink: #eef1f4;
+  --navy-soft: #c3ccda;
+  --navy-line: #46546e;
+  --brass-on-navy: #d8c39c;
+
+  /* Indicador de conexión. */
+  --live-idle: #8a95a8;
+  --live-online: #4cc38a;
+  --live-warn: #f0a35b;
+  --live-offline: #ff8a7a;
+
   --status-ready: #1e7a55;
   --status-dirty: #a6520a;
   --status-occupied: #2f5da8;
@@ -47,12 +61,15 @@
   --space-7: 2.5rem;
   --space-8: 3rem;
 
+  /* Jerarquía de radios: control → panel → superficie grande → llavero → píldora.
+     El radio de llavero se reserva para la tarjeta de habitación; ninguna otra superficie lo usa. */
   --radius-s: 6px;
   --radius-m: 10px;
-  --radius-fob: 48px;
+  --radius-l: 16px;
+  --radius-fob: 36px;
   --radius-pill: 999px;
 
-  --shadow-tag: 0 1px 0 rgb(24 35 58 / 0.06), 0 8px 16px -10px rgb(24 35 58 / 0.35);
+  --shadow-tag: 0 1px 2px rgb(24 35 58 / 0.06), 0 6px 14px -12px rgb(24 35 58 / 0.5);
   --focus-ring: 0 0 0 3px var(--paper), 0 0 0 6px var(--brass);
 }
 
@@ -269,8 +286,8 @@ code {
   align-items: center;
   gap: var(--space-3) var(--space-5);
   padding: var(--space-3) var(--space-5);
-  background: #18233a;
-  color: #eef1f4;
+  background: var(--navy);
+  color: var(--navy-ink);
 }
 
 .brand {
@@ -283,7 +300,7 @@ code {
 .brand__mark {
   width: 1.75rem;
   height: 1.75rem;
-  color: #d8c39c;
+  color: var(--brass-on-navy);
 }
 
 .brand__name {
@@ -303,16 +320,16 @@ code {
   border-radius: var(--radius-s);
   text-decoration: none;
   font-weight: 700;
-  color: #c3ccda;
+  color: var(--navy-soft);
 }
 
 .topnav__link:hover {
-  color: #ffffff;
+  color: var(--navy-ink);
 }
 
 .topnav__link[aria-current='page'] {
-  color: #ffffff;
-  box-shadow: inset 0 -3px 0 #d8c39c;
+  color: var(--navy-ink);
+  box-shadow: inset 0 -3px 0 var(--brass-on-navy);
   border-radius: 0;
 }
 
@@ -325,28 +342,28 @@ code {
   align-items: center;
   gap: var(--space-2);
   font-size: var(--step--1);
-  color: #c3ccda;
+  color: var(--navy-soft);
 }
 
 .live__dot {
   width: 0.625rem;
   height: 0.625rem;
   border-radius: 50%;
-  background: #8a95a8;
+  background: var(--live-idle);
 }
 
 .live[data-state='connected'] .live__dot {
-  background: #4cc38a;
+  background: var(--live-online);
   box-shadow: 0 0 0 3px rgb(76 195 138 / 0.25);
 }
 
 .live[data-state='reconnecting'] .live__dot {
-  background: #f0a35b;
+  background: var(--live-warn);
   animation: live-blink 1s steps(2, start) infinite;
 }
 
 .live[data-state='offline'] .live__dot {
-  background: #ff8a7a;
+  background: var(--live-offline);
 }
 
 @keyframes live-blink {
@@ -373,7 +390,7 @@ code {
 
 .usermenu__role {
   font-size: var(--step--1);
-  color: #c3ccda;
+  color: var(--navy-soft);
 }
 
 .usermenu .button--quiet {
@@ -381,7 +398,7 @@ code {
 }
 
 .usermenu .button--quiet:hover {
-  border-color: #46546e;
+  border-color: var(--navy-line);
 }
 
 /* ---------- Página ---------- */
@@ -450,19 +467,19 @@ code {
 .toast {
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-s);
-  border-left: 4px solid #d8c39c;
-  background: #18233a;
-  color: #eef1f4;
+  border-left: 4px solid var(--brass-on-navy);
+  background: var(--navy);
+  color: var(--navy-ink);
   box-shadow: 0 10px 24px -12px rgb(0 0 0 / 0.6);
   animation: toast-in 180ms ease-out;
 }
 
 .toast--error {
-  border-left-color: #ff8a7a;
+  border-left-color: var(--live-offline);
 }
 
 .toast--success {
-  border-left-color: #4cc38a;
+  border-left-color: var(--live-online);
 }
 
 @keyframes toast-in {
@@ -485,11 +502,67 @@ code {
   }
 }
 
+/* Chips de estado y búsqueda comparten una sola banda: el tablero no gana una fila extra. */
+.board-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-5);
+  margin-bottom: var(--space-6);
+}
+
 .filters {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
-  margin-bottom: var(--space-6);
+}
+
+/* Búsqueda por número o tipo: filtra las tarjetas ya renderizadas, sin consultar al servidor.
+   Vive en el encabezado (no compite con los chips) y nace oculta: el JavaScript la muestra,
+   así que sin JS no queda un control muerto. */
+.board-search {
+  flex: 0 1 20rem;
+  min-width: 0;
+}
+
+.board-search__field {
+  position: relative;
+}
+
+.board-search__icon {
+  position: absolute;
+  top: 50%;
+  left: var(--space-3);
+  width: 1.125rem;
+  height: 1.125rem;
+  color: var(--ink-soft);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.board-search__input {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: var(--space-2) var(--space-3) var(--space-2) calc(var(--space-3) * 2 + 1.125rem);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+}
+
+.board-search__input:focus-visible {
+  border-color: var(--brass);
+}
+
+/* `role="status"`: anuncia cuántas coinciden sin mover el foco. */
+.board-search__status {
+  flex: 1 1 100%;
+  color: var(--ink-soft);
+  font-size: var(--step--1);
+}
+
+.board-search__status:empty {
+  display: none;
 }
 
 .chip {
@@ -600,7 +673,7 @@ code {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  padding: var(--space-3) var(--space-3) var(--space-3);
+  padding: var(--space-3);
   border: 1px solid var(--line);
   border-radius: var(--radius-fob) var(--radius-fob) var(--radius-m) var(--radius-m);
   background: var(--surface);
@@ -627,14 +700,15 @@ code {
 .key-tag__fob {
   display: grid;
   justify-items: center;
-  gap: var(--space-1);
+  gap: 0.125rem;
   padding-top: var(--space-1);
 }
 
+/* El agujero del llavero queda como detalle de marca, no como protagonista de la tarjeta. */
 .key-tag__hole {
-  width: 1rem;
-  height: 1rem;
-  border: 3px solid var(--brass);
+  width: 0.625rem;
+  height: 0.625rem;
+  border: 2px solid var(--brass);
   border-radius: 50%;
   background: var(--paper);
   box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.3);
@@ -643,8 +717,8 @@ code {
 .key-tag__number {
   font-family: var(--font-numeral);
   font-weight: 800;
-  font-size: 2.875rem;
-  line-height: 0.95;
+  font-size: 2.125rem;
+  line-height: 1;
   letter-spacing: 0.02em;
 }
 
@@ -653,17 +727,25 @@ code {
   color: var(--ink-soft);
 }
 
+/* Banda de estado: una sola línea, siempre. El código (VD, VC…) es el ancla; la etiqueta corta
+   lo acompaña y no parte la tarjeta en dos renglones. */
 .key-tag__status {
   display: flex;
+  flex-wrap: nowrap;
   align-items: center;
   gap: var(--space-2);
-  min-height: 3rem; /* misma altura aunque la etiqueta ocupe dos líneas */
+  min-height: 2.5rem;
   margin-inline: calc(-1 * var(--space-3));
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-1) var(--space-3);
   background: var(--tone);
   color: var(--on-status);
   font-weight: 700;
   line-height: 1.2;
+}
+
+.key-tag__status .icon {
+  width: 1rem;
+  height: 1rem;
 }
 
 .key-tag--ooo .key-tag__status {
@@ -675,14 +757,19 @@ code {
 }
 
 .key-tag__code {
+  flex: none;
   font-family: var(--font-numeral);
   font-weight: 800;
-  font-size: var(--step-1);
+  font-size: 1.0625rem;
   letter-spacing: 0.05em;
 }
 
 .key-tag__label {
+  min-width: 0;
+  overflow: hidden;
   font-size: var(--step--1);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .key-tag__note {
@@ -693,6 +780,13 @@ code {
 .key-tag__note--ooo {
   font-weight: 400;
   color: var(--ink-soft);
+}
+
+/* El contenido fluye desde arriba: si una tarjeta de la fila es más alta, el espacio sobrante
+   queda al final y no como un hueco entre la banda de estado y los botones. */
+.key-tag__foot {
+  display: grid;
+  gap: var(--space-2);
 }
 
 .key-tag__actions,
@@ -725,7 +819,6 @@ code {
 }
 
 .key-tag__meta {
-  margin-top: auto;
   font-size: var(--step--1);
   color: var(--ink-soft);
 }
@@ -956,7 +1049,7 @@ code {
   width: min(26rem, 100vw - 2 * var(--space-5));
   padding: var(--space-6);
   border: 1px solid var(--line);
-  border-radius: 7rem 7rem var(--radius-m) var(--radius-m);
+  border-radius: var(--radius-l) var(--radius-l) var(--radius-m) var(--radius-m);
   background: var(--surface);
   box-shadow: var(--shadow-tag);
 }
@@ -1069,7 +1162,11 @@ code {
   }
 
   .key-tag__number {
-    font-size: 2.5rem;
+    font-size: 1.875rem;
+  }
+
+  .board-search {
+    flex: 1 1 100%;
   }
 
   .focus {
@@ -1170,8 +1267,8 @@ code {
 
 .badge--nav {
   margin-left: var(--space-1);
-  background: #d8c39c;
-  color: #18233a;
+  background: var(--brass-on-navy);
+  color: var(--navy);
 }
 
 .empty-state {
@@ -2047,11 +2144,27 @@ th .data-table__secondary {
 
 @media print {
   .toolbar,
+  .board-search,
   .pagination,
   .data-table__actions,
   .chat__composer,
   .chat__sidebar,
   .page-header__actions {
     display: none !important;
+  }
+}
+
+/* ---------- Pantallas muy estrechas (320 px) ---------- */
+@media (max-width: 22.5rem) {
+  /* Sin espacio para ícono + código + etiqueta en una línea: el código y el color ya
+     identifican el estado, así que el ícono decorativo es lo primero que se sacrifica.
+     Se aprieta además el espaciado interno para que la etiqueta nunca se recorte. */
+  .key-tag__status .icon {
+    display: none;
+  }
+
+  .key-tag__status {
+    gap: var(--space-1);
+    padding-inline: var(--space-2);
   }
 }

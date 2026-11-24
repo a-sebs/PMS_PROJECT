@@ -53,8 +53,13 @@ Escala tipográfica (base 16 px, razón ≈ 1.25): 13 · 16 · 20 · 25 · 31 ·
 ### Espaciado y forma
 
 - Espaciado en múltiplos de 4 px (`--space-1` = 4 px … `--space-8` = 48 px).
-- Radios con jerarquía: llaveros con la parte superior redondeada (como el objeto real); paneles con
-  radio pequeño; chips totalmente redondeados.
+- Radios con jerarquía: `--radius-s` 6 px (controles) → `--radius-m` 10 px (paneles) →
+  `--radius-l` 16 px (superficies grandes) → `--radius-fob` 36 px (solo el llavero) →
+  `--radius-pill` (chips e insignias).
+- **El radio de llavero es exclusivo de la tarjeta de habitación.** Es lo que mantiene el concepto
+  del casillero sin que el resto de la interfaz parezca un prototipo temático.
+- La barra superior no cambia con el tema: sus colores salen de `--navy`, `--navy-ink`,
+  `--navy-soft`, `--navy-line` y `--brass-on-navy`, nunca de un hex suelto.
 
 ## 4. Pantallas
 
@@ -65,22 +70,39 @@ Escala tipográfica (base 16 px, razón ≈ 1.25): 13 · 16 · 20 · 25 · 31 ·
 │ Aurora  Panel  Habitaciones                ● En vivo   Lucía · Salir │
 ├──────────────────────────────────────────────────────────────────────┤
 │ Habitaciones                                                         │
-│ (Todas 24) (Listas 9) (Sucias 7) (Ocupadas 5) (Fuera de servicio 1)  │
+│ (Todas 22) (Listas 7) (Por limpiar 9) (Ocupadas 7) (F. servicio 2)   │
+│                                    ⌕ Buscar número o tipo…           │
 │                                                       ┌────────────┐ │
 │ Piso 1                                                │ Actividad  │ │
-│  ╭──○──╮ ╭──○──╮ ╭──○──╮ ╭──○──╮ ╭──○──╮             │ 21:15 ·    │ │
-│  │ 101 │ │ 102 │ │ 103 │ │ 104 │ │ 105 │             │ Lucía: 204 │ │
-│  │Doble│ │Indiv│ │Doble│ │Suite│ │Doble│             │ Sucia → En │ │
-│  │▓ VC │ │▓ VD │ │▓ OC │ │▒ OOO│ │▓ VI │             │ limpieza   │ │
-│  │[acc]│ │[acc]│ │     │ │[acc]│ │     │             │ …          │ │
-│  ╰─────╯ ╰─────╯ ╰─────╯ ╰─────╯ ╰─────╯             └────────────┘ │
+│  ╭──○──╮ ╭──○──╮ ╭──○──╮ ╭──○──╮                     │ 21:15 ·    │ │
+│  │ 101 │ │ 102 │ │ 103 │ │ 104 │                     │ Lucía: 204 │ │
+│  │Indiv│ │Doble│ │Doble│ │Suite│                     │ Sucia → En │ │
+│  │✓ VC │ │✓ VC │ │◗ OC │ │◇ VD │ ← una línea         │ limpieza   │ │
+│  │[Iniciar limpieza]  │ │[Iniciar limpieza]│         │ …          │ │
+│  │Lucía, 17:38        │ │Lucía, 17:38      │         └────────────┘ │
+│  ╰─────╯ ╰─────╯ ╰─────╯ ╰─────╯                                    │
 │ Piso 2 …                                                             │
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
 - Los chips de conteo **son** los filtros (no hay dos controles para lo mismo).
+- **Búsqueda por número o tipo**: filtra las tarjetas que ya están en la página, sin consultar al
+  servidor y sin alterar los contadores de los chips. Nace oculta y la muestra el JavaScript: sin
+  JS no queda un control que no haga nada.
 - En el celular, los llaveros pasan a 2 columnas y la bitácora va debajo.
 - Las acciones de cada llavero son solo las que el usuario puede ejecutar.
+
+#### Anatomía del llavero
+
+| Elemento | Regla |
+| --- | --- |
+| Número | Big Shoulders 800 a 34 px (30 px en móvil): destaca sobre el tipo, sin dominar la tarjeta |
+| Agujero | 10 px con borde de 2 px: detalle de marca, no protagonista |
+| Banda de estado | **Una sola línea**: código (`VD`) + etiqueta corta + ícono decorativo |
+| Etiqueta corta | `shortLabel` del estado (`Inspeccionada`, `Bloqueada`); el nombre completo se reserva para la bitácora y los anuncios |
+| Nota | Motivo del bloqueo o "En limpieza ahora", en texto secundario |
+| Acciones | Una **principal** (primera transición disponible) y el resto secundarias |
+| Pie | Empujado al fondo: todas las tarjetas de una fila alinean sus botones |
 
 ### Panel (dashboard)
 
