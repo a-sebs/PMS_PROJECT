@@ -26,10 +26,10 @@ Convenciones:
 | GET | `/signup` | Público | Página | Formulario de registro (HU-39) |
 | POST | `/signup` | Público (10 cuentas por hora por IP) | Redirección o página con errores (422/409) | Crea la cuenta inactiva con rol Recepción (pendiente de aprobación) y redirige al login |
 | GET | `/forgot-password` | Público | Página | Pedir el enlace de recuperación (HU-40) |
-| POST | `/forgot-password` | Público (10 / 15 min por IP) | Página | Misma respuesta exista o no la cuenta; "envía" el correo simulado |
+| POST | `/forgot-password` | Público (10 / 15 min por IP) | Página | Misma respuesta exista o no la cuenta; encola el correo y lo entrega por el transporte configurado |
 | GET | `/reset-password/:token` | Público | Página (410 si el enlace no sirve) | Formulario de nueva clave |
 | POST | `/reset-password/:token` | Público (10 / 15 min por IP) | Redirección al login, 422 o 410 | Cambia la clave, gasta el token y cierra las sesiones abiertas |
-| GET | `/dev/correos` | Público, **solo en desarrollo** (`SHOW_MAIL_OUTBOX`) | Página | Bandeja de pruebas con los correos simulados |
+| GET | `/dev/correos` | Público, **solo fuera de producción** | Página | Bandeja de pruebas con los correos y su estado de entrega |
 | GET | `/guests` | `guests.view` | Página | Listado paginado (`?q=`, `?nationality=`, `?page=`, `?perPage=10\|25\|50`) |
 | GET | `/guests/lookup?id=` | `guests.view` | Redirección | Consulta directa por identificador |
 | GET | `/guests/new` | `guests.manage` | Página | Formulario de alta |

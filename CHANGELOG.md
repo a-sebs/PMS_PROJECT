@@ -8,6 +8,21 @@ Todos los cambios relevantes del proyecto. Formato basado en
 - Preparados staging desde `develop` y la demo estable desde `main` en Render Free, cada uno conectado a su rama de PostgreSQL en el mismo proyecto Neon, migraciones al arranque
   y controles de GitHub Actions para Node 22 y 24 (ADR-0013).
 
+### Agregado: envío real de correos de recuperación
+
+- La recuperación de clave ya no es simulada: `MAIL_TRANSPORT=smtp` envía el enlace por un servidor
+  SMTP real (nodemailer, sin subdependencias) y `MAIL_TRANSPORT=outbox` mantiene el modo de
+  desarrollo, que es el que usan las pruebas y el CI.
+- El correo se encola dentro de la transacción del token y se entrega después del `COMMIT`: si el
+  proveedor falla, el enlace sigue siendo válido y el fallo queda anotado en vez de romper la
+  petición.
+- `email_outbox` gana `status`, `provider_id`, `error` y `sent_at` (migración 008) para distinguir
+  "encolado", "enviado", "fallido" y "simulado".
+- `/dev/correos` deja de montarse en producción, ni siquiera con `SHOW_MAIL_OUTBOX=true`: expone los
+  enlaces de recuperación.
+- Pruebas nuevas: contrato de los transportes con un nodemailer de mentira y transiciones de estado
+  de la bandeja contra PostgreSQL real.
+
 ### Agregado: requisitos obligatorios del primer bimestre (guía del docente)
 
 - Registro de usuarios (HU-39) con validación en el navegador y en el servidor; la cuenta nace

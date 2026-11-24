@@ -27,6 +27,19 @@ con el formato [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 - El CI ejecuta `npm audit --omit=dev --audit-level=high` en cada PR.
 - Las actualizaciones *mayores* (por ejemplo, Express 6) se evalúan con un ADR.
 
+### Cambiar el transporte de correo
+
+`nodemailer` es la única dependencia nueva de la entrega real, y no arrastra subdependencias.
+
+| `MAIL_TRANSPORT` | Qué hace | Cuándo usarlo |
+| --- | --- | --- |
+| `outbox` (por defecto) | El correo queda en `email_outbox`; se lee en `/dev/correos` | Desarrollo, pruebas y CI: no necesita credenciales |
+| `smtp` | Envío real; exige `MAIL_FROM`, `SMTP_HOST`, `SMTP_USER` y `SMTP_PASS` | Demos y producción |
+
+Para volver al modo simulado basta cambiar `MAIL_TRANSPORT=outbox` y reiniciar: no hay que tocar
+código ni base de datos. Si el proveedor empieza a rechazar envíos, la bandeja muestra `failed` con
+el motivo en la columna `error`, y el enlace de recuperación sigue siendo válido.
+
 ## 4. Deuda técnica conocida
 
 | ID | Descripción | Impacto | Plan |
@@ -34,6 +47,8 @@ con el formato [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 | DT-01 | El bus de eventos es en memoria: si el proceso cae entre el COMMIT y la publicación, se pierde el aviso (no los datos) | Bajo: los clientes se resincronizan al reconectar | Patrón *outbox* si se necesitara garantía |
 | DT-02 | El limitador de intentos de login guarda los contadores en memoria | Con varias instancias, cada una cuenta por separado | Almacén compartido (PostgreSQL) si se escala |
 | DT-03 | El CRUD de tipos de habitación y habitaciones (HU-05, HU-06) aún no tiene pantallas | El inventario se carga con el seed | Sprint 1 |
+| DT-04 | El límite de solicitudes de recuperación es por IP, no por cuenta | Con varias IPs se puede llenar la bandeja de una persona | Tope por destinatario además del de IP |
+| DT-05 | Un rebote del proveedor no vuelve a la aplicación | La bandeja dice `sent` aunque la dirección no exista | Webhook de rebotes del proveedor |
 
 ## 5. Monitoreo
 
