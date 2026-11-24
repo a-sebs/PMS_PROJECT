@@ -53,8 +53,13 @@ Escala tipográfica (base 16 px, razón ≈ 1.25): 13 · 16 · 20 · 25 · 31 ·
 ### Espaciado y forma
 
 - Espaciado en múltiplos de 4 px (`--space-1` = 4 px … `--space-8` = 48 px).
-- Radios con jerarquía: llaveros con la parte superior redondeada (como el objeto real); paneles con
-  radio pequeño; chips totalmente redondeados.
+- Radios con jerarquía: `--radius-s` 6 px (controles) → `--radius-m` 10 px (paneles) →
+  `--radius-l` 16 px (superficies grandes) → `--radius-fob` 36 px (solo el llavero) →
+  `--radius-pill` (chips e insignias).
+- **El radio de llavero es exclusivo de la tarjeta de habitación.** Es lo que mantiene el concepto
+  del casillero sin que el resto de la interfaz parezca un prototipo temático.
+- La barra superior no cambia con el tema: sus colores salen de `--navy`, `--navy-ink`,
+  `--navy-soft`, `--navy-line` y `--brass-on-navy`, nunca de un hex suelto.
 
 ## 4. Pantallas
 
