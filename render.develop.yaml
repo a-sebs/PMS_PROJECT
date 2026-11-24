@@ -5,7 +5,7 @@ services:
     plan: free
     branch: develop
     autoDeployTrigger: checksPass
-    healthCheckPath: /health  
+    healthCheckPath: /health
     envVars:
       - key: SEED_STAGING
         value: 'true'
