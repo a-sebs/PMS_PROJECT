@@ -54,6 +54,8 @@ está en el [plan del proyecto](docs/01-planificacion/plan-del-proyecto.md).
 | Cliente | HTML5 · CSS3 (tokens, Grid, `:has()`) · módulos ES sin frameworks |
 | Calidad | `node:test` · Supertest · ESLint · Prettier · GitHub Actions |
 
+La versión recomendada es Node.js 24 (indicada en `.nvmrc`); el mínimo requerido es 22.12.
+
 Las razones de cada elección están en los [ADR](docs/03-diseno/adr/README.md).
 
 ## Arranque rápido
