@@ -69,16 +69,54 @@ export const housekeepingMachine = defineStateMachine({
 
 /**
  * Códigos de estado combinado usados en la industria hotelera.
+ * - `label`: nombre completo, para la bitácora y los anuncios a lectores de pantalla.
+ * - `shortLabel`: versión compacta para la banda de la tarjeta, que debe caber en una sola línea.
  * - `tone`: familia visual (color + ícono) de la tarjeta.
  * - `groups`: filtros del tablero a los que pertenece (OD es "por limpiar" y "ocupada").
  */
 export const STATUS_CODES = Object.freeze({
-  OOO: { label: 'Fuera de servicio', tone: 'ooo', groups: ['ooo'], assignable: false },
-  VI: { label: 'Vacante inspeccionada', tone: 'ready', groups: ['ready'], assignable: true },
-  VC: { label: 'Vacante limpia', tone: 'ready', groups: ['ready'], assignable: true },
-  VD: { label: 'Vacante sucia', tone: 'dirty', groups: ['dirty'], assignable: false },
-  OC: { label: 'Ocupada limpia', tone: 'occupied', groups: ['occupied'], assignable: false },
-  OD: { label: 'Ocupada sucia', tone: 'dirty', groups: ['dirty', 'occupied'], assignable: false },
+  OOO: {
+    label: 'Fuera de servicio',
+    shortLabel: 'Bloqueada',
+    tone: 'ooo',
+    groups: ['ooo'],
+    assignable: false,
+  },
+  VI: {
+    label: 'Vacante inspeccionada',
+    shortLabel: 'Inspeccionada',
+    tone: 'ready',
+    groups: ['ready'],
+    assignable: true,
+  },
+  VC: {
+    label: 'Vacante limpia',
+    shortLabel: 'Vacante limpia',
+    tone: 'ready',
+    groups: ['ready'],
+    assignable: true,
+  },
+  VD: {
+    label: 'Vacante sucia',
+    shortLabel: 'Vacante sucia',
+    tone: 'dirty',
+    groups: ['dirty'],
+    assignable: false,
+  },
+  OC: {
+    label: 'Ocupada limpia',
+    shortLabel: 'Ocupada limpia',
+    tone: 'occupied',
+    groups: ['occupied'],
+    assignable: false,
+  },
+  OD: {
+    label: 'Ocupada sucia',
+    shortLabel: 'Ocupada sucia',
+    tone: 'dirty',
+    groups: ['dirty', 'occupied'],
+    assignable: false,
+  },
 });
 
 /** Filtros del tablero, en el orden en que se muestran. */

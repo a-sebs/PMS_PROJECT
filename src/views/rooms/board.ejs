@@ -1,20 +1,38 @@
 <div class="board">
   <div class="board__main">
-    <header class="page-header">
-      <h1 class="page-header__title">Habitaciones</h1>
-      <p class="page-header__lead"><%= total %> habitaciones en <%= floors.length %> pisos. Los cambios aparecen solos, sin recargar.</p>
+    <header class="page-header page-header--split">
+      <div>
+        <h1 class="page-header__title">Habitaciones</h1>
+        <p class="page-header__lead"><%= total %> habitaciones en <%= floors.length %> pisos. Los cambios aparecen solos, sin recargar.</p>
+      </div>
+
+      <%# Nace oculta y el JavaScript la muestra: sin JS no queda un control que no hace nada.
+          Filtra las tarjetas ya renderizadas (no consulta al servidor) y no altera los contadores. %>
+      <form class="board-search" role="search" data-room-search hidden>
+        <div class="board-search__field">
+          <svg class="board-search__icon" aria-hidden="true"><use href="/img/icons.svg#search"></use></svg>
+          <label class="visually-hidden" for="room-search">Buscar habitación por número o tipo</label>
+          <input class="board-search__input" id="room-search" name="q" type="search"
+                 placeholder="Buscar número o tipo…" autocomplete="off" data-room-search-input>
+        </div>
+      </form>
     </header>
 
-    <nav class="filters" aria-label="Filtrar por estado">
-      <a class="chip" id="filtro-all" href="#filtro-all" data-filter="all">
-        Todas <span class="chip__count" data-count="all"><%= total %></span>
-      </a>
-      <% for (const group of groups) { %>
-      <a class="chip chip--<%= group.id %>" id="filtro-<%= group.id %>" href="#filtro-<%= group.id %>" data-filter="<%= group.id %>">
-        <%= group.label %> <span class="chip__count" data-count="<%= group.id %>"><%= group.count %></span>
-      </a>
-      <% } %>
-    </nav>
+    <div class="board-toolbar">
+      <nav class="filters" aria-label="Filtrar por estado">
+        <a class="chip" id="filtro-all" href="#filtro-all" data-filter="all">
+          Todas <span class="chip__count" data-count="all"><%= total %></span>
+        </a>
+        <% for (const group of groups) { %>
+        <a class="chip chip--<%= group.id %>" id="filtro-<%= group.id %>" href="#filtro-<%= group.id %>" data-filter="<%= group.id %>">
+          <%= group.label %> <span class="chip__count" data-count="<%= group.id %>"><%= group.count %></span>
+        </a>
+        <% } %>
+      </nav>
+
+      <%# Cuántas coinciden; vacío (y oculto) mientras no se busca nada. %>
+      <p class="board-search__status" data-room-search-status role="status"></p>
+    </div>
 
     <% for (const floor of floors) { %>
     <section class="floor" aria-labelledby="floor-<%= floor.floor %>">

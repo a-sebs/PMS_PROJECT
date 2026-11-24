@@ -8,6 +8,19 @@ Todos los cambios relevantes del proyecto. Formato basado en
 - Preparados staging desde `develop` y la demo estable desde `main` en Render Free, cada uno conectado a su rama de PostgreSQL en el mismo proyecto Neon, migraciones al arranque
   y controles de GitHub Actions para Node 22 y 24 (ADR-0013).
 
+### Cambiado: renovación visual de la interfaz
+
+- Sistema de tokens: la barra superior, los avisos y el indicador de conexión usan `--navy`,
+  `--brass-on-navy` y `--live-*` en vez de colores literales; la escala de radios se unifica
+  (6 / 10 / 16 / 36 px) y el radio de llavero queda reservado a la tarjeta de habitación.
+- Tarjeta de habitación: el estado cabe en una sola línea (código + etiqueta corta), el número pasa
+  a 34 px, el agujero del llavero se reduce y las acciones se agrupan con una sola principal.
+- La pantalla de acceso abandona el radio de 7 rem que la hacía parecer un llavero gigante.
+- Nuevo: búsqueda de habitaciones por número o tipo en el tablero. Filtra en el navegador, no
+  consulta al servidor, no altera los contadores y no se muestra cuando no hay JavaScript.
+- Nuevo: `docs/03-diseno/contrato-de-ui.md`, con los atributos, clases y pruebas que un rediseño no
+  puede tocar y los contrastes medidos que debe conservar.
+
 ### Agregado: requisitos obligatorios del primer bimestre (guía del docente)
 
 - Registro de usuarios (HU-39) con validación en el navegador y en el servidor; la cuenta nace

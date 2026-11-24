@@ -502,11 +502,67 @@ code {
   }
 }
 
+/* Chips de estado y búsqueda comparten una sola banda: el tablero no gana una fila extra. */
+.board-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-5);
+  margin-bottom: var(--space-6);
+}
+
 .filters {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
-  margin-bottom: var(--space-6);
+}
+
+/* Búsqueda por número o tipo: filtra las tarjetas ya renderizadas, sin consultar al servidor.
+   Vive en el encabezado (no compite con los chips) y nace oculta: el JavaScript la muestra,
+   así que sin JS no queda un control muerto. */
+.board-search {
+  flex: 0 1 20rem;
+  min-width: 0;
+}
+
+.board-search__field {
+  position: relative;
+}
+
+.board-search__icon {
+  position: absolute;
+  top: 50%;
+  left: var(--space-3);
+  width: 1.125rem;
+  height: 1.125rem;
+  color: var(--ink-soft);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.board-search__input {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: var(--space-2) var(--space-3) var(--space-2) calc(var(--space-3) * 2 + 1.125rem);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+}
+
+.board-search__input:focus-visible {
+  border-color: var(--brass);
+}
+
+/* `role="status"`: anuncia cuántas coinciden sin mover el foco. */
+.board-search__status {
+  flex: 1 1 100%;
+  color: var(--ink-soft);
+  font-size: var(--step--1);
+}
+
+.board-search__status:empty {
+  display: none;
 }
 
 .chip {
@@ -617,7 +673,7 @@ code {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  padding: var(--space-3) var(--space-3) var(--space-3);
+  padding: var(--space-3);
   border: 1px solid var(--line);
   border-radius: var(--radius-fob) var(--radius-fob) var(--radius-m) var(--radius-m);
   background: var(--surface);
@@ -644,14 +700,15 @@ code {
 .key-tag__fob {
   display: grid;
   justify-items: center;
-  gap: var(--space-1);
+  gap: 0.125rem;
   padding-top: var(--space-1);
 }
 
+/* El agujero del llavero queda como detalle de marca, no como protagonista de la tarjeta. */
 .key-tag__hole {
-  width: 1rem;
-  height: 1rem;
-  border: 3px solid var(--brass);
+  width: 0.625rem;
+  height: 0.625rem;
+  border: 2px solid var(--brass);
   border-radius: 50%;
   background: var(--paper);
   box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.3);
@@ -660,8 +717,8 @@ code {
 .key-tag__number {
   font-family: var(--font-numeral);
   font-weight: 800;
-  font-size: 2.875rem;
-  line-height: 0.95;
+  font-size: 2.125rem;
+  line-height: 1;
   letter-spacing: 0.02em;
 }
 
@@ -670,17 +727,25 @@ code {
   color: var(--ink-soft);
 }
 
+/* Banda de estado: una sola línea, siempre. El código (VD, VC…) es el ancla; la etiqueta corta
+   lo acompaña y no parte la tarjeta en dos renglones. */
 .key-tag__status {
   display: flex;
+  flex-wrap: nowrap;
   align-items: center;
   gap: var(--space-2);
-  min-height: 3rem; /* misma altura aunque la etiqueta ocupe dos líneas */
+  min-height: 2.5rem;
   margin-inline: calc(-1 * var(--space-3));
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-1) var(--space-3);
   background: var(--tone);
   color: var(--on-status);
   font-weight: 700;
   line-height: 1.2;
+}
+
+.key-tag__status .icon {
+  width: 1rem;
+  height: 1rem;
 }
 
 .key-tag--ooo .key-tag__status {
@@ -692,14 +757,19 @@ code {
 }
 
 .key-tag__code {
+  flex: none;
   font-family: var(--font-numeral);
   font-weight: 800;
-  font-size: var(--step-1);
+  font-size: 1.0625rem;
   letter-spacing: 0.05em;
 }
 
 .key-tag__label {
+  min-width: 0;
+  overflow: hidden;
   font-size: var(--step--1);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .key-tag__note {
@@ -710,6 +780,13 @@ code {
 .key-tag__note--ooo {
   font-weight: 400;
   color: var(--ink-soft);
+}
+
+/* El contenido fluye desde arriba: si una tarjeta de la fila es más alta, el espacio sobrante
+   queda al final y no como un hueco entre la banda de estado y los botones. */
+.key-tag__foot {
+  display: grid;
+  gap: var(--space-2);
 }
 
 .key-tag__actions,
@@ -742,7 +819,6 @@ code {
 }
 
 .key-tag__meta {
-  margin-top: auto;
   font-size: var(--step--1);
   color: var(--ink-soft);
 }
@@ -1086,7 +1162,11 @@ code {
   }
 
   .key-tag__number {
-    font-size: 2.5rem;
+    font-size: 1.875rem;
+  }
+
+  .board-search {
+    flex: 1 1 100%;
   }
 
   .focus {
@@ -2064,11 +2144,27 @@ th .data-table__secondary {
 
 @media print {
   .toolbar,
+  .board-search,
   .pagination,
   .data-table__actions,
   .chat__composer,
   .chat__sidebar,
   .page-header__actions {
     display: none !important;
+  }
+}
+
+/* ---------- Pantallas muy estrechas (320 px) ---------- */
+@media (max-width: 22.5rem) {
+  /* Sin espacio para ícono + código + etiqueta en una línea: el código y el color ya
+     identifican el estado, así que el ícono decorativo es lo primero que se sacrifica.
+     Se aprieta además el espaciado interno para que la etiqueta nunca se recorte. */
+  .key-tag__status .icon {
+    display: none;
+  }
+
+  .key-tag__status {
+    gap: var(--space-1);
+    padding-inline: var(--space-2);
   }
 }

@@ -26,7 +26,8 @@ resuelven en el servidor, y el WebSocket vive en el mismo proyecto.
   guardado, lista de conectados, aviso e insignia de mensajes sin leer.
 - **Tablero de habitaciones en vivo**: cada habitación es un llavero con su estado combinado de la
   industria (VI, VC, VD, OC, OD, OOO). Cuando alguien la cambia, el resto lo ve en menos de un
-  segundo, sin recargar.
+  segundo, sin recargar. La recepción encuentra una habitación escribiendo su número o su tipo,
+  sin esperar al servidor.
 - **Limpieza** inicia y termina limpiezas; **recepción** marca habitaciones sucias;
   **mantenimiento** las bloquea con motivo; **administración** inspecciona. Cada rol ve solo los
   botones que puede usar, y el servidor vuelve a verificarlo.
