@@ -27,6 +27,13 @@ const envSchema = z
       .optional(),
     // Muestra la bandeja de correos simulados en /dev/correos. Por defecto, solo en desarrollo.
     SHOW_MAIL_OUTBOX: optionalBoolean,
+    // Entrega de correos. 'outbox' los deja en la bandeja de pruebas; 'smtp' los envía de verdad.
+    MAIL_TRANSPORT: z.enum(['outbox', 'smtp']).default('outbox'),
+    MAIL_FROM: z.email('MAIL_FROM debe ser un correo válido').optional(),
+    SMTP_HOST: z.string().min(1).optional(),
+    SMTP_PORT: z.coerce.number().int().min(1).max(65535).default(587),
+    SMTP_USER: z.string().min(1).optional(),
+    SMTP_PASS: z.string().min(1).optional(),
   })
   .superRefine((env, ctx) => {
     if (env.NODE_ENV === 'production' && env.SESSION_SECRET.startsWith('cambia-esto')) {
@@ -42,6 +49,19 @@ const envSchema = z
         path: ['APP_URL'],
         message: 'En producción, APP_URL es obligatoria (por ejemplo https://aurora.midominio.com)',
       });
+    }
+    // Con envío real, la aplicación no arranca si falta cómo autenticarse: es mejor fallar al
+    // inicio que descubrirlo cuando alguien pide recuperar su clave.
+    if (env.MAIL_TRANSPORT === 'smtp') {
+      for (const key of ['MAIL_FROM', 'SMTP_HOST', 'SMTP_USER', 'SMTP_PASS']) {
+        if (!env[key]) {
+          ctx.addIssue({
+            code: 'custom',
+            path: [key],
+            message: `${key} es obligatoria cuando MAIL_TRANSPORT=smtp`,
+          });
+        }
+      }
     }
   });
 
@@ -80,6 +100,13 @@ export function loadConfig(env = process.env) {
     logLevel: e.LOG_LEVEL ?? defaultLogLevel,
     trustProxy: e.TRUST_PROXY,
     appUrl: (e.APP_URL ?? `http://localhost:${e.PORT || 3000}`).replace(/\/+$/, ''),
-    showMailOutbox: e.SHOW_MAIL_OUTBOX ?? e.NODE_ENV === 'development',
+    // La bandeja de pruebas muestra enlaces de recuperación: en producción no se expone nunca.
+    showMailOutbox: !isProduction && (e.SHOW_MAIL_OUTBOX ?? e.NODE_ENV === 'development'),
+    mailTransport: e.MAIL_TRANSPORT,
+    mailFrom: e.MAIL_FROM ?? null,
+    smtpHost: e.SMTP_HOST ?? null,
+    smtpPort: e.SMTP_PORT,
+    smtpUser: e.SMTP_USER ?? null,
+    smtpPass: e.SMTP_PASS ?? null,
   });
 }

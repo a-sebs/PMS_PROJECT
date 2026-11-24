@@ -14,6 +14,7 @@ export function createMailRouter({ mailService }) {
     res.renderPage('mail/outbox', {
       title: 'Bandeja de pruebas',
       layout: req.user ? 'layouts/main' : 'layouts/auth',
+      transportName: mailService.transportName,
       emails: await mailService.listOutbox(30),
     });
   });

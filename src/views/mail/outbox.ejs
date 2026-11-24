@@ -1,8 +1,22 @@
+<%
+  const STATUS_LABELS = {
+    sent: 'Enviado',
+    simulated: 'Simulado',
+    failed: 'Falló',
+    queued: 'En cola',
+  };
+%>
 <section class="outbox" aria-labelledby="outbox-title">
   <header class="page-header">
     <h1 class="page-header__title" id="outbox-title">Bandeja de pruebas</h1>
-    <p class="page-header__lead">Correos simulados que la aplicación habría enviado. Solo existe en
-      desarrollo: en producción se reemplaza por un servidor de correo real.</p>
+    <% if (transportName === 'smtp') { %>
+    <p class="page-header__lead">Registro de los correos que la aplicación intentó enviar. El envío
+      es real (SMTP): cada fila dice si el proveedor lo aceptó o si falló.</p>
+    <% } else { %>
+    <p class="page-header__lead">Correos simulados que la aplicación habría enviado: el transporte
+      es <code>outbox</code>, así que nada sale de la máquina. En producción se usa un servidor de
+      correo real.</p>
+    <% } %>
   </header>
 
   <% if (emails.length === 0) { %>
@@ -14,7 +28,7 @@
       <article>
         <header class="outbox__header">
           <h2 class="outbox__subject"><%= email.subject %></h2>
-          <p class="outbox__meta">Para <strong><%= email.to %></strong> · <time datetime="<%= email.createdAt %>"><%= formatDateTime(email.createdAt) %></time></p>
+          <p class="outbox__meta">Para <strong><%= email.to %></strong> · <time datetime="<%= email.createdAt %>"><%= formatDateTime(email.createdAt) %></time> · <%= STATUS_LABELS[email.status] ?? email.status %><% if (email.error) { %> — <%= email.error %><% } %></p>
         </header>
         <pre class="outbox__body"><%= email.body %></pre>
         <% if (email.linkUrl) { %>

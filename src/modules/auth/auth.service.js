@@ -111,7 +111,7 @@ export function createAuthService({ db, events, auditService, mailService, appUr
 
     /**
      * HU-40 · Si el correo pertenece a una cuenta activa, genera un enlace de un solo uso y lo
-     * "envía" (correo simulado). Quien llama responde lo mismo exista o no la cuenta.
+     * envía por el transporte configurado. Quien llama responde lo mismo exista o no la cuenta.
      * @param {string} email
      * @returns {Promise<{ sent: boolean }>} `sent` es solo para pruebas y registros internos.
      */
@@ -122,6 +122,7 @@ export function createAuthService({ db, events, auditService, mailService, appUr
       const token = randomBytes(32).toString('base64url');
       const link = `${appUrl}/reset-password/${token}`;
 
+      let queued = null;
       await db.transaction(async (client) => {
         await resets.invalidatePending(client, user.id);
         await resets.insert(client, {
@@ -129,26 +130,30 @@ export function createAuthService({ db, events, auditService, mailService, appUr
           tokenHash: sha256(token),
           ttlMinutes: RESET_TOKEN_TTL_MINUTES,
         });
-        await mailService?.send(
-          {
-            to: user.email,
-            subject: 'Restablece tu clave de Aurora PMS',
-            body: [
-              `Hola, ${firstName(user.fullName)}:`,
-              '',
-              'Recibimos una solicitud para restablecer la clave de tu cuenta de Aurora PMS.',
-              'Abre este enlace para elegir una nueva:',
-              '',
-              link,
-              '',
-              `El enlace caduca en ${RESET_TOKEN_TTL_MINUTES} minutos y solo se puede usar una vez.`,
-              'Si no pediste este cambio, ignora este correo: tu clave actual sigue funcionando.',
-            ].join('\n'),
-            linkUrl: link,
-          },
-          client,
-        );
+        // Dentro de la transacción solo se ENCOLA el correo. La entrega va después del COMMIT:
+        // así un fallo del proveedor no revierte el token que el usuario ya tiene en su enlace.
+        queued =
+          (await mailService?.queue(
+            {
+              to: user.email,
+              subject: 'Restablece tu clave de Aurora PMS',
+              body: [
+                `Hola, ${firstName(user.fullName)}:`,
+                '',
+                'Recibimos una solicitud para restablecer la clave de tu cuenta de Aurora PMS.',
+                'Abre este enlace para elegir una nueva:',
+                '',
+                link,
+                '',
+                `El enlace caduca en ${RESET_TOKEN_TTL_MINUTES} minutos y solo se puede usar una vez.`,
+                'Si no pediste este cambio, ignora este correo: tu clave actual sigue funcionando.',
+              ].join('\n'),
+              linkUrl: link,
+            },
+            client,
+          )) ?? null;
       });
+      if (queued) await mailService.deliver(queued);
       return { sent: true };
     },
 
