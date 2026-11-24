@@ -27,7 +27,8 @@ resuelven en el servidor, y el WebSocket vive en el mismo proyecto.
   guardado, lista de conectados, aviso e insignia de mensajes sin leer.
 - **Tablero de habitaciones en vivo**: cada habitación es un llavero con su estado combinado de la
   industria (VI, VC, VD, OC, OD, OOO). Cuando alguien la cambia, el resto lo ve en menos de un
-  segundo, sin recargar.
+  segundo, sin recargar. La recepción encuentra una habitación escribiendo su número o su tipo,
+  sin esperar al servidor.
 - **Limpieza** inicia y termina limpiezas; **recepción** marca habitaciones sucias;
   **mantenimiento** las bloquea con motivo; **administración** inspecciona. Cada rol ve solo los
   botones que puede usar, y el servidor vuelve a verificarlo.
@@ -54,6 +55,8 @@ está en el [plan del proyecto](docs/01-planificacion/plan-del-proyecto.md).
 | Base de datos | PostgreSQL ≥ 15 con SQL explícito (`pg`) y migraciones en SQL |
 | Cliente | HTML5 · CSS3 (tokens, Grid, `:has()`) · módulos ES sin frameworks |
 | Calidad | `node:test` · Supertest · ESLint · Prettier · GitHub Actions |
+
+La versión recomendada es Node.js 24 (indicada en `.nvmrc`); el mínimo requerido es 22.12.
 
 Las razones de cada elección están en los [ADR](docs/03-diseno/adr/README.md).
 

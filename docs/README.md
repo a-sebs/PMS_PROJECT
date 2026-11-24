@@ -48,6 +48,7 @@ flowchart LR
 | 3. Diseño | [Rutas HTTP](03-diseno/rutas.md) | ¿Qué URLs expone la aplicación? |
 | 3. Diseño | [Seguridad](03-diseno/seguridad.md) | ¿Cómo protegemos datos y accesos? |
 | 3. Diseño | [UI/UX y accesibilidad](03-diseno/ui-ux.md) | ¿Cómo se ve y cómo se usa? |
+| 3. Diseño | [Contrato de UI](03-diseno/contrato-de-ui.md) | ¿Qué puedo cambiar de la interfaz sin romper el JavaScript, el servidor o las pruebas? |
 | 3. Diseño | [Decisiones de arquitectura (ADR)](03-diseno/adr/README.md) | ¿Por qué elegimos lo que elegimos? |
 | 4. Desarrollo | [Guía de desarrollo](04-desarrollo/guia-de-desarrollo.md) | ¿Cómo levanto el proyecto y cómo contribuyo? |
 | 5. Pruebas | [Estrategia de pruebas](05-pruebas/estrategia-de-pruebas.md) | ¿Cómo sabemos que funciona? |

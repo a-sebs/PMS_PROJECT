@@ -3,18 +3,22 @@
 La guía pide paginación, índices en los campos de búsqueda, chat sin recargar la página y "al menos
 una medición simple". Aquí están tres mediciones, cómo repetirlas y lo que aprendimos de ellas.
 
-**Entorno:** contenedor Linux con Node.js 22, PostgreSQL 16 y Chromium headless, aplicación en modo
-desarrollo (`npm run dev`), 17 de noviembre de 2026. Los tiempos cambian según la máquina: lo
-importante es la comparación dentro de cada tabla.
+**Entorno:** Windows 11 con Node.js 22.22, PostgreSQL 17 en un contenedor Docker y Chrome 158
+headless, aplicación en modo desarrollo (`npm run dev`), 24 de noviembre de 2026. Los tiempos
+cambian según la máquina: lo importante es la comparación dentro de cada tabla.
 
 ## 1. Lighthouse 12.8
 
 | Página | Dispositivo | Rendimiento | Accesibilidad | Buenas prácticas | FCP | LCP | TBT | CLS |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | `/login` | Móvil (simulado) | 100 | 100 | 100 | 1,2 s | 1,4 s | 0 ms | 0 |
-| `/guests?q=salazar` | Móvil (simulado) | 100 | 100 | 100 | 1,1 s | 1,9 s | 0 ms | 0,004 |
-| `/guests?q=salazar` | Escritorio | 100 | 100 | 100 | 0,3 s | 0,5 s | 0 ms | 0,006 |
+| `/guests?q=salazar` | Móvil (simulado) | 99–100 | 100 | 100 | 1,1 s | 1,9 s | 0 ms | 0,004 |
+| `/guests?q=salazar` | Escritorio | 100 | 100 | 100 | 0,3 s | 0,4 s | 0 ms | 0,006 |
 | `/chat/general` | Escritorio | 100 | 100 | 100 | 0,3 s | 0,5 s | 0 ms | 0,006 |
+
+El puntaje de rendimiento se mueve ±1 punto entre corridas con las mismas métricas de carga (en el
+móvil de huéspedes, tres corridas seguidas dieron 99, 99 y 100 con idénticos FCP, LCP y CLS): por
+eso esa fila se informa como rango. Las otras tres páginas dieron 100 en su corrida registrada.
 
 Informes completos (se abren en el navegador): [login](lighthouse/login-movil.html),
 [huéspedes](lighthouse/huespedes-escritorio.html) y [chat](lighthouse/chat-escritorio.html).

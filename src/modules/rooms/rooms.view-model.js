@@ -33,8 +33,11 @@ export function toRoomView(room, user) {
     typeCode: room.roomType.code,
     code,
     label: meta.label,
+    shortLabel: meta.shortLabel,
     tone: meta.tone,
     groups: meta.groups,
+    // Texto normalizado para la búsqueda del tablero: número + tipo ("204 suite").
+    searchText: `${room.number} ${room.roomType.name}`.toLowerCase(),
     isAssignable: meta.assignable,
     isOccupied: room.occupancyStatus === 'occupied',
     housekeepingStatus: room.housekeepingStatus,
