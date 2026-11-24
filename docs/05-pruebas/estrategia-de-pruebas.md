@@ -44,7 +44,7 @@ En CI (`.github/workflows/ci.yml`) corren con Node 22 y 24 contra un servicio de
 
 | Métrica | Umbral | Sprint 0 | Entrega del primer bimestre |
 | --- | --- | --- | --- |
-| Pruebas en verde | 100 % | 85 / 85 | 145 / 145 |
+| Pruebas en verde | 100 % | 85 / 85 | 146 / 146 |
 | Cobertura de líneas en `src/` | ≥ 70 % | 97 % | 97 % |
 | Cobertura de ramas en `src/` | ≥ 60 % | 88 % | 87 % |
 | Propagación en vivo entre dos navegadores | < 1 s | ≈ 70–90 ms | Mensaje del chat visible en el otro navegador en < 1 s (Playwright) |

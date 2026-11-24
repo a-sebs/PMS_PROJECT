@@ -56,6 +56,6 @@ aplicación**. Esa organización prepara el segundo bimestre ([ADR-0012](../03-d
 | Rendimiento: paginación e índices | Listado paginado; índice trigram para la búsqueda, índices por apellido y nacionalidad | `migrations/006_guests.sql` |
 | Rendimiento: chat sin recargar | Socket.IO agrega cada mensaje a la conversación sin recargar la página | `src/public/js/pages/chat.js` |
 | Rendimiento: medición | Lighthouse 100/100/100 y medición de consultas con y sin índices sobre 200 000 huéspedes | [Rendimiento](../05-pruebas/rendimiento.md) |
-| Calidad: 5+ pruebas automatizadas | 145 pruebas (unitarias, de integración con PostgreSQL real y de tiempo real con dos clientes) | `npm test` |
+| Calidad: 5+ pruebas automatizadas | 146 pruebas (unitarias, de integración con PostgreSQL real y de tiempo real con dos clientes) | `npm test` |
 | Calidad: README | Instrucciones para ejecutar el proyecto | [README](../../README.md) |
 

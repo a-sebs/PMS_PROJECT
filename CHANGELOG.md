@@ -20,6 +20,14 @@ Todos los cambios relevantes del proyecto. Formato basado en
   consulta al servidor, no altera los contadores y no se muestra cuando no hay JavaScript.
 - Nuevo: `docs/03-diseno/contrato-de-ui.md`, con los atributos, clases y pruebas que un rediseño no
   puede tocar y los contrastes medidos que debe conservar.
+- Capturas del `README.md` e informes de Lighthouse regenerados contra la interfaz nueva: las tres
+  páginas medidas siguen en 100 / 100 / 100 y el móvil de huéspedes se informa como 99–100 por el
+  ruido de ±1 punto entre corridas.
+
+### Corregido
+
+- El conteo de pruebas de la documentación pasa a 146 (seguía en 145 desde el PR del registro de
+  usuarios).
 
 ### Agregado: requisitos obligatorios del primer bimestre (guía del docente)
 
