@@ -137,8 +137,8 @@ sistema sin esperar a que alguien me la cree**.
 Como **miembro del personal**, quiero **restablecer mi clave si la olvidé** para **volver a entrar
 sin pedir ayuda**.
 
-1. Dado mi correo, cuando pido el enlace, entonces recibo (correo simulado) un enlace que caduca en
-   30 minutos y solo sirve una vez; la pantalla dice lo mismo exista o no la cuenta.
+1. Dado mi correo, cuando pido el enlace, entonces recibo un enlace que caduca en 30 minutos y solo
+   sirve una vez; la pantalla dice lo mismo exista o no la cuenta.
 2. Dado un enlace vigente, cuando elijo una clave nueva válida, entonces se guarda, el enlace deja de
    servir y se cierran mis sesiones abiertas en otros dispositivos.
 3. Dado un enlace caducado, usado o reemplazado por uno más reciente, cuando lo abro, entonces se me

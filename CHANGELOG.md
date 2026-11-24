@@ -8,26 +8,20 @@ Todos los cambios relevantes del proyecto. Formato basado en
 - Preparados staging desde `develop` y la demo estable desde `main` en Render Free, cada uno conectado a su rama de PostgreSQL en el mismo proyecto Neon, migraciones al arranque
   y controles de GitHub Actions para Node 22 y 24 (ADR-0013).
 
-### Cambiado: renovación visual de la interfaz
+### Agregado: envío real de correos de recuperación
 
-- Sistema de tokens: la barra superior, los avisos y el indicador de conexión usan `--navy`,
-  `--brass-on-navy` y `--live-*` en vez de colores literales; la escala de radios se unifica
-  (6 / 10 / 16 / 36 px) y el radio de llavero queda reservado a la tarjeta de habitación.
-- Tarjeta de habitación: el estado cabe en una sola línea (código + etiqueta corta), el número pasa
-  a 34 px, el agujero del llavero se reduce y las acciones se agrupan con una sola principal.
-- La pantalla de acceso abandona el radio de 7 rem que la hacía parecer un llavero gigante.
-- Nuevo: búsqueda de habitaciones por número o tipo en el tablero. Filtra en el navegador, no
-  consulta al servidor, no altera los contadores y no se muestra cuando no hay JavaScript.
-- Nuevo: `docs/03-diseno/contrato-de-ui.md`, con los atributos, clases y pruebas que un rediseño no
-  puede tocar y los contrastes medidos que debe conservar.
-- Capturas del `README.md` e informes de Lighthouse regenerados contra la interfaz nueva: las tres
-  páginas medidas siguen en 100 / 100 / 100 y el móvil de huéspedes se informa como 99–100 por el
-  ruido de ±1 punto entre corridas.
-
-### Corregido
-
-- El conteo de pruebas de la documentación pasa a 146 (seguía en 145 desde el PR del registro de
-  usuarios).
+- La recuperación de clave ya no es simulada: `MAIL_TRANSPORT=smtp` envía el enlace por un servidor
+  SMTP real (nodemailer, sin subdependencias) y `MAIL_TRANSPORT=outbox` mantiene el modo de
+  desarrollo, que es el que usan las pruebas y el CI.
+- El correo se encola dentro de la transacción del token y se entrega después del `COMMIT`: si el
+  proveedor falla, el enlace sigue siendo válido y el fallo queda anotado en vez de romper la
+  petición.
+- `email_outbox` gana `status`, `provider_id`, `error` y `sent_at` (migración 008) para distinguir
+  "encolado", "enviado", "fallido" y "simulado".
+- `/dev/correos` deja de montarse en producción, ni siquiera con `SHOW_MAIL_OUTBOX=true`: expone los
+  enlaces de recuperación.
+- Pruebas nuevas: contrato de los transportes con un nodemailer de mentira y transiciones de estado
+  de la bandeja contra PostgreSQL real.
 
 ### Agregado: requisitos obligatorios del primer bimestre (guía del docente)
 

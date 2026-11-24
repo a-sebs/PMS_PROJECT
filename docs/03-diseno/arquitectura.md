@@ -78,7 +78,7 @@ flowchart TB
         users["users"]
         guests["guests (CRUD)"]
         chat["chat"]
-        mail["mail (simulado)"]
+        mail["mail<br/>outbox · smtp"]
         rooms["rooms"]
         audit["audit"]
         dash["dashboard"]

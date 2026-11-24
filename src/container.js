@@ -7,7 +7,7 @@ import { createAuthService } from './modules/auth/auth.service.js';
 import { registerChatRealtime } from './modules/chat/chat.realtime.js';
 import { createChatService } from './modules/chat/chat.service.js';
 import { createGuestsService } from './modules/guests/guests.service.js';
-import { createMailService } from './modules/mail/mail.service.js';
+import { createMailService, createMailTransport } from './modules/mail/mail.service.js';
 import { registerRoomsRealtime } from './modules/rooms/rooms.realtime.js';
 import { createRoomsService } from './modules/rooms/rooms.service.js';
 import { createRealtimeGateway } from './realtime/gateway.js';
@@ -34,7 +34,12 @@ export function createContainer({ config, logger, presenceGraceMs = 4000 }) {
   });
 
   const auditService = createAuditService({ db });
-  const mailService = createMailService({ db, logger });
+  const mailService = createMailService({ db, logger, transport: createMailTransport(config) });
+  if (config.isProduction && config.mailTransport === 'outbox') {
+    logger.warn(
+      'MAIL_TRANSPORT=outbox en producción: los correos de recuperación no saldrán de la aplicación',
+    );
+  }
   const authService = createAuthService({
     db,
     events,

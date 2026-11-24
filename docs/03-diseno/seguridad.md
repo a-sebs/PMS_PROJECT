@@ -78,10 +78,26 @@ las contraseñas existentes.
 | Token filtrado en los logs | El serializador de `pino-http` oculta `/reset-password/<token>` |
 | Sesión robada antes del cambio | Restablecer la clave borra todas las sesiones de la cuenta y desconecta sus sockets |
 | Inundar a alguien de correos | 10 solicitudes / 15 min por IP |
+| El proveedor de correo no responde | El correo se encola dentro de la transacción y se entrega después del `COMMIT`: el token queda válido y el fallo se anota en `email_outbox` |
 
-El envío de correos es **simulado** (lo permite la guía): queda en la tabla `email_outbox` y en
-desarrollo se lee en `/dev/correos`. Esa página nunca se monta en producción salvo que se active a
-propósito con `SHOW_MAIL_OUTBOX=true` (solo para una demo controlada: expone los enlaces).
+### Entrega de correos
+
+El correo se escribe siempre en `email_outbox` y después se entrega por el transporte configurado
+en `MAIL_TRANSPORT`:
+
+- **`outbox`** (por defecto en desarrollo y en las pruebas): el correo se queda en la tabla y se lee
+  en `/dev/correos`. Nada sale de la máquina. Es el modo que usan las pruebas automatizadas, así que
+  el CI no necesita credenciales.
+- **`smtp`**: envío real por un servidor SMTP (Gmail, Brevo, el que sea). La aplicación no arranca
+  si falta `MAIL_FROM`, `SMTP_HOST`, `SMTP_USER` o `SMTP_PASS`: es mejor fallar al inicio que
+  descubrirlo cuando alguien pide recuperar su clave.
+
+Cada fila guarda su `status`: `queued`, `sent`, `failed` o `simulated`. "Aceptado por el proveedor"
+no es "entregado": un rebote posterior llega a la cuenta remitente, no a la aplicación, y por eso la
+bandeja no lo puede saber sola.
+
+La bandeja `/dev/correos` **nunca se monta en producción**, ni con `SHOW_MAIL_OUTBOX=true`: expone
+los enlaces de recuperación de clave.
 
 ### Socket.IO
 
@@ -98,8 +114,7 @@ propósito con `SHOW_MAIL_OUTBOX=true` (solo para una demo controlada: expone lo
 ### Logs
 
 Las peticiones se registran con método, URL y código de estado, **sin cabeceras** (llevan la cookie
-de sesión) y con los tokens de recuperación ocultos. Los correos simulados se registran sin el
-enlace.
+de sesión) y con los tokens de recuperación ocultos. Los correos se registran sin el enlace.
 
 ## 4. Lista de verificación por PR
 

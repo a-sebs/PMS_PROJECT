@@ -92,6 +92,10 @@ erDiagram
         text subject
         text body_text
         text link_url
+        text status "queued | sent | failed | simulated"
+        text provider_id "lo que devolvió el proveedor"
+        text error "motivo del fallo"
+        timestamptz sent_at "solo si salió de verdad"
     }
     chat_messages {
         bigint id PK
