@@ -24,5 +24,6 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
   CMD wget -qO- http://127.0.0.1:3000/health || exit 1
 
-# Aplica migraciones pendientes y arranca. En un PaaS se puede separar como "release command".
-CMD ["sh", "-c", "node scripts/migrate.js && node src/main.js"]
+# Dockerfile (la semilla solo corre si SEED_STAGING=true)
+CMD ["sh", "-c", "node scripts/migrate.js && { [ \"$SEED_STAGING\" != \"true\" ] || node scripts/seed-staging.js; } && exec node src/main.js"]
+
